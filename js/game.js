@@ -117,28 +117,114 @@ const game = {
 
 // Achievement definitions
 const achievementDefs = {
+    // Click achievements
     firstClick: { name: "First Steps", desc: "Click to collect honey", icon: "🐝", check: () => game.totalClicks >= 1 },
     hundredClicks: { name: "Busy Bee", desc: "Click 100 times", icon: "👆", check: () => game.totalClicks >= 100 },
     thousandClicks: { name: "Click Master", desc: "Click 1,000 times", icon: "🖱️", check: () => game.totalClicks >= 1000 },
+    fiveKClicks: { name: "Dedicated", desc: "Click 5,000 times", icon: "💪", check: () => game.totalClicks >= 5000 },
+    tenKClicks: { name: "Obsessed", desc: "Click 10,000 times", icon: "🎯", check: () => game.totalClicks >= 10000 },
+    fiftyKClicks: { name: "Carpal Tunnel", desc: "Click 50,000 times", icon: "🤕", check: () => game.totalClicks >= 50000 },
+    hundredKClicks: { name: "Click Legend", desc: "Click 100,000 times", icon: "🏅", check: () => game.totalClicks >= 100000 },
+
+    // Honey achievements
     firstHundred: { name: "Sweet Start", desc: "Collect 100 honey", icon: "🍯", check: () => game.totalHoney >= 100 },
     firstThousand: { name: "Honey Hoarder", desc: "Collect 1,000 honey", icon: "🏆", check: () => game.totalHoney >= 1000 },
+    tenThousand: { name: "Sweet Tooth", desc: "Collect 10,000 honey", icon: "🦷", check: () => game.totalHoney >= 10000 },
+    hundredThousand: { name: "Honey Baron", desc: "Collect 100,000 honey", icon: "👔", check: () => game.totalHoney >= 100000 },
     firstMillion: { name: "Millionaire", desc: "Collect 1M honey", icon: "💰", check: () => game.totalHoney >= 1000000 },
+    tenMillion: { name: "Tycoon", desc: "Collect 10M honey", icon: "🎩", check: () => game.totalHoney >= 10000000 },
+    hundredMillion: { name: "Mogul", desc: "Collect 100M honey", icon: "💼", check: () => game.totalHoney >= 100000000 },
     firstBillion: { name: "Billionaire", desc: "Collect 1B honey", icon: "🤑", check: () => game.totalHoney >= 1000000000 },
+    tenBillion: { name: "Honey Emperor", desc: "Collect 10B honey", icon: "👑", check: () => game.totalHoney >= 10000000000 },
+    hundredBillion: { name: "Honey God", desc: "Collect 100B honey", icon: "⚡", check: () => game.totalHoney >= 100000000000 },
+    trillion: { name: "Transcendent", desc: "Collect 1T honey", icon: "🌟", check: () => game.totalHoney >= 1000000000000 },
+
+    // Worker bee achievements
     tenWorkers: { name: "Workforce", desc: "Own 10 worker bees", icon: "👷", check: () => game.upgrades.workerBee.owned >= 10 },
+    fiftyWorkers: { name: "Swarm", desc: "Own 50 worker bees", icon: "🐝", check: () => game.upgrades.workerBee.owned >= 50 },
+    hundredWorkers: { name: "Army", desc: "Own 100 worker bees", icon: "⚔️", check: () => game.upgrades.workerBee.owned >= 100 },
+    twoFiftyWorkers: { name: "Legion", desc: "Own 250 worker bees", icon: "🛡️", check: () => game.upgrades.workerBee.owned >= 250 },
+
+    // Hive achievements
     firstHive: { name: "Hive Mind", desc: "Build your first hive", icon: "🏠", check: () => game.upgrades.hive.owned >= 1 },
     fiveHives: { name: "Colony", desc: "Own 5 hives", icon: "🏘️", check: () => game.upgrades.hive.owned >= 5 },
+    twentyHives: { name: "Village", desc: "Own 20 hives", icon: "🏙️", check: () => game.upgrades.hive.owned >= 20 },
+    fiftyHives: { name: "Metropolis", desc: "Own 50 hives", icon: "🌆", check: () => game.upgrades.hive.owned >= 50 },
+
+    // Apiary achievements
     firstApiary: { name: "Beekeeper", desc: "Build your first apiary", icon: "🏭", check: () => game.upgrades.apiary.owned >= 1 },
+    tenApiaries: { name: "Industrial", desc: "Own 10 apiaries", icon: "🔧", check: () => game.upgrades.apiary.owned >= 10 },
+    twentyFiveApiaries: { name: "Factory Owner", desc: "Own 25 apiaries", icon: "🏗️", check: () => game.upgrades.apiary.owned >= 25 },
+
+    // Queen achievements
     firstQueen: { name: "Royalty", desc: "Get your first queen bee", icon: "👑", check: () => game.upgrades.queenBee.owned >= 1 },
+    fiveQueens: { name: "Royal Court", desc: "Own 5 queen bees", icon: "🏰", check: () => game.upgrades.queenBee.owned >= 5 },
+    tenQueens: { name: "Dynasty", desc: "Own 10 queen bees", icon: "📜", check: () => game.upgrades.queenBee.owned >= 10 },
+
+    // Flower field achievements
+    firstField: { name: "Gardener", desc: "Build your first flower field", icon: "🌻", check: () => game.upgrades.flowerField.owned >= 1 },
+    fiveFields: { name: "Farmer", desc: "Own 5 flower fields", icon: "🚜", check: () => game.upgrades.flowerField.owned >= 5 },
+    tenFields: { name: "Plantation", desc: "Own 10 flower fields", icon: "🌾", check: () => game.upgrades.flowerField.owned >= 10 },
+
+    // Market achievements
     marketUnlock: { name: "Entrepreneur", desc: "Unlock the market", icon: "📈", check: () => game.research.marketing.purchased },
     firstSale: { name: "First Sale", desc: "Earn your first coin", icon: "🪙", check: () => game.totalMoney >= 1 },
+    thousandCoins: { name: "Merchant", desc: "Earn 1,000 coins", icon: "💵", check: () => game.totalMoney >= 1000 },
     richBee: { name: "Rich Bee", desc: "Earn 10,000 coins", icon: "💎", check: () => game.totalMoney >= 10000 },
+    hundredKCoins: { name: "Wealthy", desc: "Earn 100,000 coins", icon: "💳", check: () => game.totalMoney >= 100000 },
+    millionCoins: { name: "Coin Millionaire", desc: "Earn 1M coins", icon: "🏦", check: () => game.totalMoney >= 1000000 },
+    tenMillionCoins: { name: "Banking Elite", desc: "Earn 10M coins", icon: "🏛️", check: () => game.totalMoney >= 10000000 },
+    billionCoins: { name: "Coin Billionaire", desc: "Earn 1B coins", icon: "💲", check: () => game.totalMoney >= 1000000000 },
+
+    // Flower achievements
+    firstWildflower: { name: "Wildflower", desc: "Plant your first wildflowers", icon: "🌼", check: () => game.flowers.wildflower.owned >= 1 },
+    tenWildflowers: { name: "Meadow Maker", desc: "Plant 10 wildflowers", icon: "🌿", check: () => game.flowers.wildflower.owned >= 10 },
+    firstLavender: { name: "Lavender Love", desc: "Plant your first lavender", icon: "💜", check: () => game.flowers.lavender.owned >= 1 },
+    firstSunflower: { name: "Sunflower Power", desc: "Plant your first sunflowers", icon: "🌻", check: () => game.flowers.sunflower.owned >= 1 },
+    flowerBonus50: { name: "Blooming", desc: "Reach 50% flower bonus", icon: "🌺", check: () => getFlowerBonus() >= 0.5 },
+    flowerBonus100: { name: "Garden Master", desc: "Reach 100% flower bonus", icon: "🌹", check: () => getFlowerBonus() >= 1.0 },
+
+    // Product achievements
+    firstBeeswax: { name: "Wax On", desc: "Start beeswax production", icon: "🕯️", check: () => game.products.beeswax.owned >= 1 },
+    firstRoyalJelly: { name: "Royal Treatment", desc: "Start royal jelly production", icon: "👸", check: () => game.products.royalJelly.owned >= 1 },
+    firstPropolis: { name: "Propolis Pro", desc: "Start propolis production", icon: "🧪", check: () => game.products.propolis.owned >= 1 },
+
+    // Genetics achievements
     geneticist: { name: "Geneticist", desc: "Unlock the genetics lab", icon: "🧬", check: () => game.research.geneticsUnlock.purchased },
     firstDNA: { name: "DNA Discovery", desc: "Generate your first DNA", icon: "🔬", check: () => game.dna >= 1 },
+    tenDNA: { name: "Gene Pool", desc: "Have 10 DNA points", icon: "🧫", check: () => game.dna >= 10 },
+    fiftyDNA: { name: "Genetic Wealth", desc: "Have 50 DNA points", icon: "💉", check: () => game.dna >= 50 },
+    firstStrain: { name: "Breeder", desc: "Breed your first strain", icon: "🦠", check: () => Object.values(game.strains).some(s => s.level >= 1) },
+    speedLevel5: { name: "Speed Demon", desc: "Speed strain level 5", icon: "⚡", check: () => game.strains.speedBee.level >= 5 },
+    tankLevel5: { name: "Tank Commander", desc: "Tank strain level 5", icon: "🛡️", check: () => game.strains.tankBee.level >= 5 },
+    goldenLevel5: { name: "Golden Touch", desc: "Golden strain level 5", icon: "✨", check: () => game.strains.goldenBee.level >= 5 },
+    mutantUnlock: { name: "Mutant Master", desc: "Unlock mutant strain", icon: "☢️", check: () => game.strains.speedBee.level >= 2 && game.strains.tankBee.level >= 2 },
     mutated: { name: "Mutated", desc: "Buy your first mutation", icon: "☣️", check: () => Object.values(game.mutations).some(m => m.purchased) },
+    allMutations: { name: "Fully Mutated", desc: "Buy all mutations", icon: "🧟", check: () => Object.values(game.mutations).every(m => m.purchased) },
+
+    // Global achievements
     globalReach: { name: "Global Reach", desc: "Unlock global pollination", icon: "🌍", check: () => game.research.globalNetwork.purchased },
+    firstMeadow: { name: "Meadow Pioneer", desc: "Deploy to meadows", icon: "🌱", check: () => game.regions.meadows.swarms >= 1 },
+    firstForest: { name: "Forest Friend", desc: "Deploy to forests", icon: "🌲", check: () => game.regions.forests.swarms >= 1 },
+    firstMountain: { name: "Mountain Climber", desc: "Deploy to mountains", icon: "⛰️", check: () => game.regions.mountains.swarms >= 1 },
+    firstOcean: { name: "Ocean Explorer", desc: "Deploy to oceans", icon: "🌊", check: () => game.regions.oceans.swarms >= 1 },
+    earth25: { name: "Quarter Earth", desc: "Pollinate 25% of Earth", icon: "🌏", check: () => game.earthPollinated >= 25 },
+    earth50: { name: "Half Earth", desc: "Pollinate 50% of Earth", icon: "🌐", check: () => game.earthPollinated >= 50 },
+    earth75: { name: "Almost There", desc: "Pollinate 75% of Earth", icon: "🗺️", check: () => game.earthPollinated >= 75 },
     earthComplete: { name: "Earth Saved", desc: "Pollinate 100% of Earth", icon: "🌎", check: () => game.earthPollinated >= 100 },
+
+    // Space achievements
     spaceExplorer: { name: "Space Explorer", desc: "Colonize your first planet", icon: "🚀", check: () => game.planets.mars.domes >= 1 },
-    universeConquer: { name: "Universal", desc: "Pollinate 1% of universe", icon: "✨", check: () => game.universePollinated >= 1 }
+    marsColonist: { name: "Martian", desc: "5 domes on Mars", icon: "🔴", check: () => game.planets.mars.domes >= 5 },
+    europaExplorer: { name: "Ice Walker", desc: "Colonize Europa", icon: "❄️", check: () => game.planets.europa.domes >= 1 },
+    titanPioneer: { name: "Titan Pioneer", desc: "Colonize Titan", icon: "🟠", check: () => game.planets.titan.domes >= 1 },
+    exoplanetReach: { name: "Interstellar", desc: "Reach an exoplanet", icon: "🌌", check: () => game.planets.exoplanet.domes >= 1 },
+    warpSpeed: { name: "Warp Speed", desc: "Unlock warp drive", icon: "💫", check: () => game.spaceTech.warpDrive.purchased },
+    dysonComplete: { name: "Dyson Builder", desc: "Build a Dyson swarm", icon: "☀️", check: () => game.spaceTech.dysonSwarm.purchased },
+    universeConquer: { name: "Universal", desc: "Pollinate 1% of universe", icon: "✨", check: () => game.universePollinated >= 1 },
+    universe10: { name: "Cosmic", desc: "Pollinate 10% of universe", icon: "🪐", check: () => game.universePollinated >= 10 },
+    universe50: { name: "Galactic", desc: "Pollinate 50% of universe", icon: "🌠", check: () => game.universePollinated >= 50 },
+    universeComplete: { name: "Omnipotent", desc: "Pollinate 100% of universe", icon: "🔮", check: () => game.universePollinated >= 100 }
 };
 
 // Tab switching
