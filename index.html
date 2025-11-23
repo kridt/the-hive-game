@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal Honey</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div id="game-container">
+        <header>
+            <h1>Universal Honey</h1>
+            <div id="main-display">
+                <span id="honey-count">0</span> honey
+            </div>
+            <div id="honey-per-second">
+                per second: <span id="hps">0</span>
+            </div>
+        </header>
+
+        <main>
+            <section id="actions">
+                <h2>Actions</h2>
+                <button id="collect-btn" onclick="collectHoney()">
+                    Collect Honey
+                    <span class="btn-info">+1 honey</span>
+                </button>
+            </section>
+
+            <section id="upgrades">
+                <h2>Upgrades</h2>
+                <div id="upgrade-list">
+                    <button class="upgrade-btn" id="buy-bee" onclick="buyUpgrade('workerBee')">
+                        <div class="upgrade-name">Worker Bee</div>
+                        <div class="upgrade-info">+0.1 honey/sec</div>
+                        <div class="upgrade-cost">Cost: <span id="workerBee-cost">10</span> honey</div>
+                        <div class="upgrade-owned">Owned: <span id="workerBee-owned">0</span></div>
+                    </button>
+
+                    <button class="upgrade-btn" id="buy-hive" onclick="buyUpgrade('hive')" style="display:none;">
+                        <div class="upgrade-name">Hive</div>
+                        <div class="upgrade-info">+1 honey/sec</div>
+                        <div class="upgrade-cost">Cost: <span id="hive-cost">100</span> honey</div>
+                        <div class="upgrade-owned">Owned: <span id="hive-owned">0</span></div>
+                    </button>
+
+                    <button class="upgrade-btn" id="buy-apiary" onclick="buyUpgrade('apiary')" style="display:none;">
+                        <div class="upgrade-name">Apiary</div>
+                        <div class="upgrade-info">+10 honey/sec</div>
+                        <div class="upgrade-cost">Cost: <span id="apiary-cost">1000</span> honey</div>
+                        <div class="upgrade-owned">Owned: <span id="apiary-owned">0</span></div>
+                    </button>
+
+                    <button class="upgrade-btn" id="buy-queenBee" onclick="buyUpgrade('queenBee')" style="display:none;">
+                        <div class="upgrade-name">Queen Bee</div>
+                        <div class="upgrade-info">+50 honey/sec</div>
+                        <div class="upgrade-cost">Cost: <span id="queenBee-cost">5000</span> honey</div>
+                        <div class="upgrade-owned">Owned: <span id="queenBee-owned">0</span></div>
+                    </button>
+
+                    <button class="upgrade-btn" id="buy-flowerField" onclick="buyUpgrade('flowerField')" style="display:none;">
+                        <div class="upgrade-name">Flower Field</div>
+                        <div class="upgrade-info">+200 honey/sec</div>
+                        <div class="upgrade-cost">Cost: <span id="flowerField-cost">25000</span> honey</div>
+                        <div class="upgrade-owned">Owned: <span id="flowerField-owned">0</span></div>
+                    </button>
+                </div>
+            </section>
+
+            <section id="research" style="display:none;">
+                <h2>Research</h2>
+                <div id="research-list">
+                    <button class="research-btn" id="research-efficiency" onclick="buyResearch('efficiency')">
+                        <div class="upgrade-name">Efficient Collection</div>
+                        <div class="upgrade-info">Double click value</div>
+                        <div class="upgrade-cost">Cost: <span id="efficiency-cost">50</span> honey</div>
+                    </button>
+
+                    <button class="research-btn" id="research-breeding" onclick="buyResearch('breeding')" style="display:none;">
+                        <div class="upgrade-name">Bee Breeding</div>
+                        <div class="upgrade-info">Worker bees 2x effective</div>
+                        <div class="upgrade-cost">Cost: <span id="breeding-cost">500</span> honey</div>
+                    </button>
+                </div>
+            </section>
+
+            <section id="stats">
+                <h2>Statistics</h2>
+                <div>Total honey collected: <span id="total-honey">0</span></div>
+                <div>Total clicks: <span id="total-clicks">0</span></div>
+            </section>
+        </main>
+
+        <footer>
+            <button onclick="saveGame()">Save Game</button>
+            <button onclick="resetGame()">Reset Game</button>
+            <span id="save-status"></span>
+        </footer>
+    </div>
+
+    <!-- Ad placeholder -->
+    <div id="ad-container">
+        <!-- Insert ad code here -->
+    </div>
+
+    <script src="js/game.js"></script>
+</body>
+</html>

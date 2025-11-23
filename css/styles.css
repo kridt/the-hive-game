@@ -1,0 +1,202 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: #e0e0e0;
+    margin: 0;
+    padding: 20px;
+    min-height: 100vh;
+}
+
+#game-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+h1 {
+    color: #ffd700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    margin-bottom: 10px;
+}
+
+#main-display {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: #ffd700;
+}
+
+#honey-per-second {
+    font-size: 1.2em;
+    color: #aaa;
+}
+
+main {
+    display: grid;
+    gap: 20px;
+}
+
+section {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+h2 {
+    margin-top: 0;
+    color: #ffd700;
+    font-size: 1.2em;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+    padding-bottom: 10px;
+}
+
+#collect-btn {
+    width: 100%;
+    padding: 20px;
+    font-size: 1.3em;
+    background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #1a1a2e;
+    font-weight: bold;
+    transition: transform 0.1s, box-shadow 0.1s;
+}
+
+#collect-btn:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+}
+
+#collect-btn:active {
+    transform: scale(0.98);
+}
+
+#collect-btn .btn-info {
+    display: block;
+    font-size: 0.6em;
+    font-weight: normal;
+    margin-top: 5px;
+}
+
+#upgrade-list, #research-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.upgrade-btn, .research-btn {
+    width: 100%;
+    padding: 15px;
+    text-align: left;
+    background: rgba(255, 215, 0, 0.1);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 8px;
+    cursor: pointer;
+    color: #e0e0e0;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.upgrade-btn:hover:not(:disabled), .research-btn:hover:not(:disabled) {
+    background: rgba(255, 215, 0, 0.2);
+    border-color: rgba(255, 215, 0, 0.5);
+}
+
+.upgrade-btn:disabled, .research-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.upgrade-btn.affordable, .research-btn.affordable {
+    border-color: #ffd700;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.upgrade-name {
+    font-weight: bold;
+    font-size: 1.1em;
+    color: #ffd700;
+}
+
+.upgrade-info {
+    font-size: 0.9em;
+    color: #aaa;
+    margin: 5px 0;
+}
+
+.upgrade-cost {
+    font-size: 0.9em;
+}
+
+.upgrade-owned {
+    font-size: 0.85em;
+    color: #888;
+}
+
+#stats {
+    font-size: 0.9em;
+    color: #aaa;
+}
+
+#stats div {
+    margin: 5px 0;
+}
+
+footer {
+    margin-top: 20px;
+    text-align: center;
+}
+
+footer button {
+    padding: 10px 20px;
+    margin: 0 5px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    color: #e0e0e0;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+footer button:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+#save-status {
+    display: block;
+    margin-top: 10px;
+    font-size: 0.85em;
+    color: #888;
+}
+
+#ad-container {
+    max-width: 800px;
+    margin: 20px auto;
+    text-align: center;
+    min-height: 90px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 5px;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+
+    #main-display {
+        font-size: 2em;
+    }
+
+    section {
+        padding: 15px;
+    }
+}
