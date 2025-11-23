@@ -128,7 +128,10 @@ const game = {
     settings: {
         volume: 50,
         theme: 'dark'
-    }
+    },
+
+    // Audio
+    sounds: {}
 };
 
 // Achievement definitions
@@ -365,6 +368,7 @@ function collectHoney(event) {
     void btn.offsetWidth;
     btn.classList.add('clicked');
 
+    playSound('click');
     checkAchievements();
     updateUI();
 }
@@ -411,6 +415,7 @@ function buyUpgrade(upgradeId) {
     if (game.honey >= cost) {
         game.honey -= cost;
         game.upgrades[upgradeId].owned++;
+        playSound('coin');
         checkUnlocks();
         checkAchievements();
         updateUI();
@@ -425,6 +430,7 @@ function buyResearch(researchId) {
         research.purchased = true;
         applyResearch(researchId);
         document.getElementById(`research-${researchId}`).style.display = 'none';
+        playSound('complete');
         checkAchievements();
         updateUI();
     }
@@ -481,6 +487,7 @@ function sellHoney(amount) {
         game.honey -= toSell;
         game.money += earnings;
         game.totalMoney += earnings;
+        playSound('sell');
         checkAchievements();
         updateUI();
     }
@@ -779,6 +786,8 @@ function showAchievementPopup(name) {
     popup.style.animation = 'none';
     void popup.offsetWidth;
     popup.style.animation = 'slideIn 0.5s ease, slideOut 0.5s ease 2.5s forwards';
+
+    playSound('achievement');
 
     setTimeout(() => {
         popup.classList.add('hidden');
@@ -1200,7 +1209,35 @@ function setTheme(theme) {
 function updateVolume(value) {
     game.settings.volume = parseInt(value);
     document.getElementById('volume-value').textContent = value + '%';
-    // Future: Apply volume to audio elements
+    // Update all audio volumes
+    for (const sound of Object.values(game.sounds)) {
+        sound.volume = game.settings.volume / 100;
+    }
+}
+
+// Audio system
+function initAudio() {
+    const soundFiles = {
+        click: 'sounds/plus_sfx.wav',
+        coin: 'sounds/coin.wav',
+        sell: 'sounds/cash_register_sfx.wav',
+        achievement: 'sounds/chime1.wav',
+        complete: 'sounds/complete.wav'
+    };
+
+    for (const [name, path] of Object.entries(soundFiles)) {
+        const audio = new Audio(path);
+        audio.volume = game.settings.volume / 100;
+        game.sounds[name] = audio;
+    }
+}
+
+function playSound(name) {
+    const sound = game.sounds[name];
+    if (sound && game.settings.volume > 0) {
+        sound.currentTime = 0;
+        sound.play().catch(() => {}); // Ignore autoplay errors
+    }
 }
 
 // Offline notification
@@ -1478,6 +1515,7 @@ setInterval(saveGame, 600000);
 // Initialize
 window.onload = function() {
     loadGame();
+    initAudio();
     checkUnlocks();
     updateUI();
     setupKeyboardShortcuts();
