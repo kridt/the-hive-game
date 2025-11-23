@@ -3,7 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Universal Honey</title>
+    <title>Universal Honey - Incremental Bee Empire Game</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Build your bee empire from a single hive to galactic domination. An addictive incremental idle game with genetics, markets, and space colonization.">
+    <meta name="keywords" content="incremental game, idle game, clicker game, bee game, honey game, browser game">
+    <meta name="author" content="Universal Honey">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Universal Honey - Incremental Bee Empire Game">
+    <meta property="og:description" content="Build your bee empire from a single hive to galactic domination. Collect honey, breed genetic strains, and colonize the universe!">
+    <meta property="og:image" content="/og-image.png">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Universal Honey - Incremental Bee Empire Game">
+    <meta name="twitter:description" content="Build your bee empire from a single hive to galactic domination!">
+    <meta name="twitter:image" content="/og-image.png">
+
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍯</text></svg>">
+
     <link rel="stylesheet" href="css/styles.css">
     <!-- Vercel Analytics -->
     <script defer src="/_vercel/insights/script.js"></script>
@@ -28,6 +49,8 @@
             <button class="tab-btn active" onclick="switchTab('production')">Production</button>
             <button class="tab-btn" onclick="switchTab('market')" id="tab-market" style="display:none;">Market</button>
             <button class="tab-btn" onclick="switchTab('genetics')" id="tab-genetics" style="display:none;">Genetics</button>
+            <button class="tab-btn" onclick="switchTab('global')" id="tab-global" style="display:none;">Global</button>
+            <button class="tab-btn" onclick="switchTab('space')" id="tab-space" style="display:none;">Space</button>
         </nav>
 
         <main>
@@ -109,6 +132,12 @@
                             <div class="upgrade-name">Genetics Research</div>
                             <div class="upgrade-info">Unlock genetics lab</div>
                             <div class="upgrade-cost">Cost: <span id="geneticsUnlock-cost">10000</span> honey</div>
+                        </button>
+
+                        <button class="research-btn" id="research-globalNetwork" onclick="buyResearch('globalNetwork')" style="display:none;">
+                            <div class="upgrade-name">Global Network</div>
+                            <div class="upgrade-info">Unlock global pollination</div>
+                            <div class="upgrade-cost">Cost: <span id="globalNetwork-cost">100000</span> honey</div>
                         </button>
                     </div>
                 </section>
@@ -254,6 +283,140 @@
                 </section>
             </div>
 
+            <!-- Global Tab (Phase 4) -->
+            <div id="global-tab" class="tab-content">
+                <section id="pollination-index">
+                    <h2>Global Pollination</h2>
+                    <div class="progress-display">
+                        <div>Earth Pollinated: <span id="earth-pollinated">0</span>%</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="earth-progress"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="regions-section">
+                    <h2>Regions</h2>
+                    <p class="section-info">Deploy swarms to pollinate regions</p>
+                    <div id="region-list">
+                        <button class="region-btn" id="region-meadows" onclick="deployToRegion('meadows')">
+                            <div class="upgrade-name">Meadows</div>
+                            <div class="upgrade-info">+1K honey/sec, +0.1% pollination/sec</div>
+                            <div class="upgrade-cost">Cost: <span id="meadows-cost">50000</span> coins</div>
+                            <div class="upgrade-owned">Swarms: <span id="meadows-swarms">0</span></div>
+                        </button>
+
+                        <button class="region-btn" id="region-forests" onclick="deployToRegion('forests')" style="display:none;">
+                            <div class="upgrade-name">Forests</div>
+                            <div class="upgrade-info">+5K honey/sec, +0.5% pollination/sec</div>
+                            <div class="upgrade-cost">Cost: <span id="forests-cost">250000</span> coins</div>
+                            <div class="upgrade-owned">Swarms: <span id="forests-swarms">0</span></div>
+                        </button>
+
+                        <button class="region-btn" id="region-mountains" onclick="deployToRegion('mountains')" style="display:none;">
+                            <div class="upgrade-name">Mountains</div>
+                            <div class="upgrade-info">+20K honey/sec, +1% pollination/sec</div>
+                            <div class="upgrade-cost">Cost: <span id="mountains-cost">1000000</span> coins</div>
+                            <div class="upgrade-owned">Swarms: <span id="mountains-swarms">0</span></div>
+                        </button>
+
+                        <button class="region-btn" id="region-oceans" onclick="deployToRegion('oceans')" style="display:none;">
+                            <div class="upgrade-name">Ocean Platforms</div>
+                            <div class="upgrade-info">+100K honey/sec, +5% pollination/sec</div>
+                            <div class="upgrade-cost">Cost: <span id="oceans-cost">5000000</span> coins</div>
+                            <div class="upgrade-owned">Swarms: <span id="oceans-swarms">0</span></div>
+                        </button>
+                    </div>
+                </section>
+
+                <section id="eco-upgrades">
+                    <h2>Ecosystem Upgrades</h2>
+                    <div id="eco-list">
+                        <button class="eco-btn" id="eco-biodiversity" onclick="buyEcoUpgrade('biodiversity')">
+                            <div class="upgrade-name">Biodiversity Boost</div>
+                            <div class="upgrade-info">All regions +50% effective</div>
+                            <div class="upgrade-cost">Cost: <span id="biodiversity-cost">100000</span> coins</div>
+                        </button>
+
+                        <button class="eco-btn" id="eco-climate" onclick="buyEcoUpgrade('climate')" style="display:none;">
+                            <div class="upgrade-name">Climate Adaptation</div>
+                            <div class="upgrade-info">Unlock space exploration</div>
+                            <div class="upgrade-cost">Cost: <span id="climate-cost">1000000</span> coins</div>
+                        </button>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Space Tab (Phase 5) -->
+            <div id="space-tab" class="tab-content">
+                <section id="universe-progress">
+                    <h2>Universal Expansion</h2>
+                    <div class="progress-display">
+                        <div>Universe Pollinated: <span id="universe-pollinated">0</span>%</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill space-progress" id="universe-progress-bar"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="planets-section">
+                    <h2>Planets</h2>
+                    <p class="section-info">Establish bio-domes on other worlds</p>
+                    <div id="planet-list">
+                        <button class="planet-btn" id="planet-mars" onclick="colonizePlanet('mars')">
+                            <div class="upgrade-name">Mars Colony</div>
+                            <div class="upgrade-info">+500K honey/sec, +0.01% universe/sec</div>
+                            <div class="upgrade-cost">Cost: <span id="mars-cost">10000000</span> coins</div>
+                            <div class="upgrade-owned">Domes: <span id="mars-domes">0</span></div>
+                        </button>
+
+                        <button class="planet-btn" id="planet-europa" onclick="colonizePlanet('europa')" style="display:none;">
+                            <div class="upgrade-name">Europa Station</div>
+                            <div class="upgrade-info">+2M honey/sec, +0.05% universe/sec</div>
+                            <div class="upgrade-cost">Cost: <span id="europa-cost">50000000</span> coins</div>
+                            <div class="upgrade-owned">Domes: <span id="europa-domes">0</span></div>
+                        </button>
+
+                        <button class="planet-btn" id="planet-titan" onclick="colonizePlanet('titan')" style="display:none;">
+                            <div class="upgrade-name">Titan Hives</div>
+                            <div class="upgrade-info">+10M honey/sec, +0.1% universe/sec</div>
+                            <div class="upgrade-cost">Cost: <span id="titan-cost">250000000</span> coins</div>
+                            <div class="upgrade-owned">Domes: <span id="titan-domes">0</span></div>
+                        </button>
+
+                        <button class="planet-btn" id="planet-exoplanet" onclick="colonizePlanet('exoplanet')" style="display:none;">
+                            <div class="upgrade-name">Exoplanet Network</div>
+                            <div class="upgrade-info">+100M honey/sec, +1% universe/sec</div>
+                            <div class="upgrade-cost">Cost: <span id="exoplanet-cost">1000000000</span> coins</div>
+                            <div class="upgrade-owned">Domes: <span id="exoplanet-domes">0</span></div>
+                        </button>
+                    </div>
+                </section>
+
+                <section id="space-tech">
+                    <h2>Space Technology</h2>
+                    <div id="space-tech-list">
+                        <button class="space-btn" id="tech-warpDrive" onclick="buySpaceTech('warpDrive')">
+                            <div class="upgrade-name">Warp Drive</div>
+                            <div class="upgrade-info">All space production x2</div>
+                            <div class="upgrade-cost">Cost: <span id="warpDrive-cost">100000000</span> coins</div>
+                        </button>
+
+                        <button class="space-btn" id="tech-dysonSwarm" onclick="buySpaceTech('dysonSwarm')" style="display:none;">
+                            <div class="upgrade-name">Dyson Swarm</div>
+                            <div class="upgrade-info">Infinite energy - all production x10</div>
+                            <div class="upgrade-cost">Cost: <span id="dysonSwarm-cost">1000000000</span> coins</div>
+                        </button>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Achievements Section -->
+            <section id="achievements-section">
+                <h2>Achievements <span id="achievement-count">(0/0)</span></h2>
+                <div id="achievements-list"></div>
+            </section>
+
             <section id="stats">
                 <h2>Statistics</h2>
                 <div>Total honey collected: <span id="total-honey">0</span></div>
@@ -268,6 +431,15 @@
             <button onclick="resetGame()">Reset Game</button>
             <span id="save-status"></span>
         </footer>
+    </div>
+
+    <!-- Achievement Notification -->
+    <div id="achievement-popup" class="hidden">
+        <div class="achievement-icon">🏆</div>
+        <div class="achievement-text">
+            <div class="achievement-title">Achievement Unlocked!</div>
+            <div class="achievement-name" id="popup-achievement-name"></div>
+        </div>
     </div>
 
     <script src="js/game.js"></script>

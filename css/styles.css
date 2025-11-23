@@ -467,3 +467,189 @@ footer button:hover {
         text-align: center;
     }
 }
+
+/* Progress bars */
+.progress-display {
+    margin-bottom: 15px;
+}
+
+.progress-bar {
+    height: 20px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #22c55e, #4ade80);
+    border-radius: 10px;
+    transition: width 0.3s ease;
+    width: 0%;
+}
+
+.progress-fill.space-progress {
+    background: linear-gradient(90deg, #3b82f6, #60a5fa);
+}
+
+/* Region buttons (Phase 4) */
+.region-btn, .eco-btn {
+    width: 100%;
+    padding: 15px;
+    text-align: left;
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    border-radius: 8px;
+    cursor: pointer;
+    color: #e0e0e0;
+    transition: background 0.2s, border-color 0.2s;
+    margin-bottom: 10px;
+}
+
+.region-btn:hover:not(:disabled), .eco-btn:hover:not(:disabled) {
+    background: rgba(34, 197, 94, 0.2);
+    border-color: rgba(34, 197, 94, 0.5);
+}
+
+.region-btn.affordable, .eco-btn.affordable {
+    border-color: #22c55e;
+    box-shadow: 0 0 10px rgba(34, 197, 94, 0.3);
+}
+
+.region-btn .upgrade-name, .eco-btn .upgrade-name {
+    color: #4ade80;
+}
+
+/* Planet buttons (Phase 5) */
+.planet-btn, .space-btn {
+    width: 100%;
+    padding: 15px;
+    text-align: left;
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 8px;
+    cursor: pointer;
+    color: #e0e0e0;
+    transition: background 0.2s, border-color 0.2s;
+    margin-bottom: 10px;
+}
+
+.planet-btn:hover:not(:disabled), .space-btn:hover:not(:disabled) {
+    background: rgba(59, 130, 246, 0.2);
+    border-color: rgba(59, 130, 246, 0.5);
+}
+
+.planet-btn.affordable, .space-btn.affordable {
+    border-color: #3b82f6;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+}
+
+.planet-btn .upgrade-name, .space-btn .upgrade-name {
+    color: #60a5fa;
+}
+
+.planet-btn:disabled, .space-btn:disabled,
+.region-btn:disabled, .eco-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Achievements */
+#achievements-section {
+    margin-top: 20px;
+}
+
+#achievements-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+}
+
+.achievement {
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    opacity: 0.5;
+}
+
+.achievement.unlocked {
+    opacity: 1;
+    border-color: #ffd700;
+    background: rgba(255, 215, 0, 0.1);
+}
+
+.achievement-icon-small {
+    font-size: 1.5em;
+    margin-bottom: 5px;
+}
+
+.achievement-name-small {
+    font-weight: bold;
+    font-size: 0.9em;
+    color: #ffd700;
+}
+
+.achievement-desc {
+    font-size: 0.75em;
+    color: #888;
+    margin-top: 3px;
+}
+
+/* Achievement popup */
+#achievement-popup {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 2px solid #ffd700;
+    border-radius: 10px;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    animation: slideIn 0.5s ease, slideOut 0.5s ease 2.5s forwards;
+}
+
+#achievement-popup.hidden {
+    display: none;
+}
+
+.achievement-icon {
+    font-size: 2em;
+}
+
+.achievement-title {
+    font-size: 0.8em;
+    color: #888;
+}
+
+.achievement-name {
+    font-weight: bold;
+    color: #ffd700;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
