@@ -310,10 +310,12 @@ function getBulkCost(type, id, amount) {
     return totalCost;
 }
 
-function getMaxBuyable(type, id, currency) {
+function getMaxBuyable(type, id, currency, exactAmount = false) {
     let count = 0;
     let totalCost = 0;
     let item;
+    const buyAmount = game.settings.buyAmount;
+    const isMax = buyAmount === -1;
 
     switch(type) {
         case 'upgrade':
@@ -323,7 +325,7 @@ function getMaxBuyable(type, id, currency) {
                 if (totalCost + nextCost > currency) break;
                 totalCost += nextCost;
                 count++;
-                if (count >= game.settings.buyAmount) break;
+                if (!isMax && count >= buyAmount) break;
             }
             break;
         case 'flower':
@@ -333,7 +335,7 @@ function getMaxBuyable(type, id, currency) {
                 if (totalCost + nextCost > currency) break;
                 totalCost += nextCost;
                 count++;
-                if (count >= game.settings.buyAmount) break;
+                if (!isMax && count >= buyAmount) break;
             }
             break;
         case 'product':
@@ -343,7 +345,7 @@ function getMaxBuyable(type, id, currency) {
                 if (totalCost + nextCost > currency) break;
                 totalCost += nextCost;
                 count++;
-                if (count >= game.settings.buyAmount) break;
+                if (!isMax && count >= buyAmount) break;
             }
             break;
         case 'region':
@@ -353,7 +355,7 @@ function getMaxBuyable(type, id, currency) {
                 if (totalCost + nextCost > currency) break;
                 totalCost += nextCost;
                 count++;
-                if (count >= game.settings.buyAmount) break;
+                if (!isMax && count >= buyAmount) break;
             }
             break;
         case 'planet':
@@ -363,11 +365,38 @@ function getMaxBuyable(type, id, currency) {
                 if (totalCost + nextCost > currency) break;
                 totalCost += nextCost;
                 count++;
-                if (count >= game.settings.buyAmount) break;
+                if (!isMax && count >= buyAmount) break;
             }
             break;
     }
+
+    // For exact amount mode (not max), require full amount
+    if (!isMax && exactAmount && count < buyAmount) {
+        return { count: 0, totalCost: 0 };
+    }
+
     return { count, totalCost };
+}
+
+// Get bulk info for display
+function getBulkInfo(type, id, currency) {
+    const buyAmount = game.settings.buyAmount;
+    const isMax = buyAmount === -1;
+
+    if (buyAmount === 1) {
+        return null; // Don't show for x1
+    }
+
+    const { count, totalCost } = getMaxBuyable(type, id, currency);
+
+    if (count === 0) return null;
+
+    // For non-max, check if we can afford full amount
+    if (!isMax && count < buyAmount) {
+        return { count: 0, totalCost: getBulkCost(type, id, buyAmount), canAfford: false };
+    }
+
+    return { count, totalCost, canAfford: true };
 }
 
 // Cost calculations
@@ -527,7 +556,7 @@ function createRipple(event) {
 
 // Buy upgrade
 function buyUpgrade(upgradeId) {
-    const { count, totalCost } = getMaxBuyable('upgrade', upgradeId, game.honey);
+    const { count, totalCost } = getMaxBuyable('upgrade', upgradeId, game.honey, true);
     if (count > 0) {
         game.honey -= totalCost;
         game.upgrades[upgradeId].owned += count;
@@ -615,7 +644,7 @@ function sellAllHoney() {
 
 // Buy flowers
 function buyFlower(flowerId) {
-    const { count, totalCost } = getMaxBuyable('flower', flowerId, game.money);
+    const { count, totalCost } = getMaxBuyable('flower', flowerId, game.money, true);
     if (count > 0) {
         game.money -= totalCost;
         game.flowers[flowerId].owned += count;
@@ -628,7 +657,7 @@ function buyFlower(flowerId) {
 
 // Buy products
 function buyProduct(productId) {
-    const { count, totalCost } = getMaxBuyable('product', productId, game.money);
+    const { count, totalCost } = getMaxBuyable('product', productId, game.money, true);
     if (count > 0) {
         game.money -= totalCost;
         game.products[productId].owned += count;
@@ -720,7 +749,7 @@ function applyMutation(mutationId) {
 
 // Phase 4: Deploy to region
 function deployToRegion(regionId) {
-    const { count, totalCost } = getMaxBuyable('region', regionId, game.money);
+    const { count, totalCost } = getMaxBuyable('region', regionId, game.money, true);
     if (count > 0) {
         game.money -= totalCost;
         game.regions[regionId].swarms += count;
@@ -771,7 +800,7 @@ function applyEcoUpgrade(upgradeId) {
 
 // Phase 5: Colonize planet
 function colonizePlanet(planetId) {
-    const { count, totalCost } = getMaxBuyable('planet', planetId, game.money);
+    const { count, totalCost } = getMaxBuyable('planet', planetId, game.money, true);
     if (count > 0) {
         game.money -= totalCost;
         game.planets[planetId].domes += count;
@@ -1005,7 +1034,7 @@ function updateButtons() {
     // Upgrades
     for (const [id, upgrade] of Object.entries(game.upgrades)) {
         const cost = getUpgradeCost(id);
-        updateButton(`buy-${id}`, `${id}-cost`, `${id}-owned`, cost, game.honey, upgrade.owned);
+        updateButton(`buy-${id}`, `${id}-cost`, `${id}-owned`, cost, game.honey, upgrade.owned, 'upgrade', id);
     }
 
     // Research
@@ -1020,13 +1049,13 @@ function updateButtons() {
     // Flowers
     for (const [id, flower] of Object.entries(game.flowers)) {
         const cost = getFlowerCost(id);
-        updateButton(`buy-${id}`, `${id}-cost`, `${id}-owned`, cost, game.money, flower.owned);
+        updateButton(`buy-${id}`, `${id}-cost`, `${id}-owned`, cost, game.money, flower.owned, 'flower', id);
     }
 
     // Products
     for (const [id, product] of Object.entries(game.products)) {
         const cost = getProductCost(id);
-        updateButton(`buy-${id}`, `${id}-cost`, `${id}-owned`, cost, game.money, product.owned);
+        updateButton(`buy-${id}`, `${id}-cost`, `${id}-owned`, cost, game.money, product.owned, 'product', id);
     }
 
     // Strains
@@ -1047,7 +1076,7 @@ function updateButtons() {
     // Regions
     for (const [id, region] of Object.entries(game.regions)) {
         const cost = getRegionCost(id);
-        updateButton(`region-${id}`, `${id}-cost`, `${id}-swarms`, cost, game.money, region.swarms);
+        updateButton(`region-${id}`, `${id}-cost`, `${id}-swarms`, cost, game.money, region.swarms, 'region', id);
     }
 
     // Eco upgrades
@@ -1062,7 +1091,7 @@ function updateButtons() {
     // Planets
     for (const [id, planet] of Object.entries(game.planets)) {
         const cost = getPlanetCost(id);
-        updateButton(`planet-${id}`, `${id}-cost`, `${id}-domes`, cost, game.money, planet.domes);
+        updateButton(`planet-${id}`, `${id}-cost`, `${id}-domes`, cost, game.money, planet.domes, 'planet', id);
     }
 
     // Space tech
@@ -1075,17 +1104,46 @@ function updateButtons() {
     }
 }
 
-function updateButton(btnId, costId, ownedId, cost, currency, owned) {
+function updateButton(btnId, costId, ownedId, cost, currency, owned, type = null, id = null) {
     const costEl = document.getElementById(costId);
     const ownedEl = document.getElementById(ownedId);
     const btnEl = document.getElementById(btnId);
 
-    if (costEl) costEl.textContent = formatNumber(cost);
     if (ownedEl) ownedEl.textContent = owned;
 
-    if (btnEl) {
-        btnEl.disabled = currency < cost;
-        btnEl.classList.toggle('affordable', currency >= cost);
+    // Handle bulk display
+    const buyAmount = game.settings.buyAmount;
+    if (type && id && buyAmount !== 1) {
+        const bulkInfo = getBulkInfo(type, id, currency);
+        if (bulkInfo) {
+            if (bulkInfo.canAfford) {
+                if (costEl) costEl.textContent = `x${bulkInfo.count} = ${formatNumber(bulkInfo.totalCost)}`;
+                if (btnEl) {
+                    btnEl.disabled = false;
+                    btnEl.classList.add('affordable');
+                }
+            } else {
+                if (costEl) costEl.textContent = `x${buyAmount} = ${formatNumber(bulkInfo.totalCost)}`;
+                if (btnEl) {
+                    btnEl.disabled = true;
+                    btnEl.classList.remove('affordable');
+                }
+            }
+        } else {
+            // Can't afford any
+            if (costEl) costEl.textContent = formatNumber(cost);
+            if (btnEl) {
+                btnEl.disabled = true;
+                btnEl.classList.remove('affordable');
+            }
+        }
+    } else {
+        // Single purchase mode
+        if (costEl) costEl.textContent = formatNumber(cost);
+        if (btnEl) {
+            btnEl.disabled = currency < cost;
+            btnEl.classList.toggle('affordable', currency >= cost);
+        }
     }
 }
 
