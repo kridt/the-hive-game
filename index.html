@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Universal Honey - Incremental Bee Empire Game</title>
 
     <!-- SEO Meta Tags -->
@@ -46,6 +46,13 @@
             </div>
             <div id="honey-per-second">
                 per second: <span id="hps">0</span>
+            </div>
+            <div id="bulk-buy">
+                <span>Buy:</span>
+                <button class="bulk-btn active" onclick="setBuyAmount(1)">x1</button>
+                <button class="bulk-btn" onclick="setBuyAmount(10)">x10</button>
+                <button class="bulk-btn" onclick="setBuyAmount(25)">x25</button>
+                <button class="bulk-btn" onclick="setBuyAmount(100)">x100</button>
             </div>
         </header>
 
@@ -470,6 +477,13 @@
                             <div class="upgrade-cost">Cost: <span id="starting-nectar-cost">5</span> Nectar</div>
                             <div class="upgrade-owned">Level: <span id="starting-level">0</span></div>
                         </button>
+
+                        <button class="rebirth-upgrade-btn" id="rebirth-offlineCap" onclick="buyRebirthUpgrade('offlineCap')">
+                            <div class="upgrade-name">Extended Rest</div>
+                            <div class="upgrade-info">+1 hour offline cap per level (max 24h)</div>
+                            <div class="upgrade-cost">Cost: <span id="offlineCap-nectar-cost">2</span> Nectar</div>
+                            <div class="upgrade-owned">Level: <span id="offlineCap-level">0</span>/23</div>
+                        </button>
                     </div>
                 </section>
             </div>
@@ -511,6 +525,17 @@
         <div class="achievement-text">
             <div class="achievement-title">Welcome Back!</div>
             <div class="achievement-name" id="offline-earnings"></div>
+        </div>
+    </div>
+
+    <!-- Daily Reward Popup -->
+    <div id="daily-popup" class="hidden">
+        <div class="daily-content">
+            <div class="daily-icon">🎁</div>
+            <h3>Daily Reward!</h3>
+            <div class="daily-streak">Day <span id="streak-count">1</span> Streak</div>
+            <div class="daily-reward" id="daily-reward-text">+100 honey</div>
+            <button onclick="claimDailyReward()">Claim!</button>
         </div>
     </div>
 

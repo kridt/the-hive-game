@@ -121,17 +121,26 @@ const game = {
         production: { level: 0, baseCost: 1, costMultiplier: 1.5, effect: 0.10 },
         clicking: { level: 0, baseCost: 2, costMultiplier: 1.5, effect: 0.25 },
         offline: { level: 0, baseCost: 3, costMultiplier: 1.5, effect: 0.20 },
-        starting: { level: 0, baseCost: 5, costMultiplier: 2, effect: 1000 }
+        starting: { level: 0, baseCost: 5, costMultiplier: 2, effect: 1000 },
+        offlineCap: { level: 0, baseCost: 2, costMultiplier: 1.3, effect: 1, maxLevel: 23 }
     },
 
     // Settings
     settings: {
         volume: 50,
-        theme: 'dark'
+        theme: 'dark',
+        buyAmount: 1
     },
 
     // Audio
-    sounds: {}
+    sounds: {},
+
+    // Offline progress
+    offlineCapHours: 1,
+
+    // Daily rewards
+    lastDailyReward: 0,
+    dailyStreak: 0
 };
 
 // Achievement definitions
@@ -252,6 +261,113 @@ function switchTab(tabName) {
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     document.getElementById(`${tabName}-tab`).classList.add('active');
     event.target.classList.add('active');
+}
+
+// Bulk buy
+function setBuyAmount(amount) {
+    game.settings.buyAmount = amount;
+    document.querySelectorAll('.bulk-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    updateUI();
+}
+
+function getBulkCost(type, id, amount) {
+    let totalCost = 0;
+    let item, getCost;
+
+    switch(type) {
+        case 'upgrade':
+            item = game.upgrades[id];
+            for (let i = 0; i < amount; i++) {
+                totalCost += Math.floor(item.baseCost * Math.pow(item.costMultiplier, item.owned + i));
+            }
+            break;
+        case 'flower':
+            item = game.flowers[id];
+            for (let i = 0; i < amount; i++) {
+                totalCost += Math.floor(item.baseCost * Math.pow(item.costMultiplier, item.owned + i));
+            }
+            break;
+        case 'product':
+            item = game.products[id];
+            for (let i = 0; i < amount; i++) {
+                totalCost += Math.floor(item.baseCost * Math.pow(item.costMultiplier, item.owned + i));
+            }
+            break;
+        case 'region':
+            item = game.regions[id];
+            for (let i = 0; i < amount; i++) {
+                totalCost += Math.floor(item.baseCost * Math.pow(item.costMultiplier, item.swarms + i));
+            }
+            break;
+        case 'planet':
+            item = game.planets[id];
+            for (let i = 0; i < amount; i++) {
+                totalCost += Math.floor(item.baseCost * Math.pow(item.costMultiplier, item.domes + i));
+            }
+            break;
+    }
+    return totalCost;
+}
+
+function getMaxBuyable(type, id, currency) {
+    let count = 0;
+    let totalCost = 0;
+    let item;
+
+    switch(type) {
+        case 'upgrade':
+            item = game.upgrades[id];
+            while (true) {
+                const nextCost = Math.floor(item.baseCost * Math.pow(item.costMultiplier, item.owned + count));
+                if (totalCost + nextCost > currency) break;
+                totalCost += nextCost;
+                count++;
+                if (count >= game.settings.buyAmount) break;
+            }
+            break;
+        case 'flower':
+            item = game.flowers[id];
+            while (true) {
+                const nextCost = Math.floor(item.baseCost * Math.pow(item.costMultiplier, item.owned + count));
+                if (totalCost + nextCost > currency) break;
+                totalCost += nextCost;
+                count++;
+                if (count >= game.settings.buyAmount) break;
+            }
+            break;
+        case 'product':
+            item = game.products[id];
+            while (true) {
+                const nextCost = Math.floor(item.baseCost * Math.pow(item.costMultiplier, item.owned + count));
+                if (totalCost + nextCost > currency) break;
+                totalCost += nextCost;
+                count++;
+                if (count >= game.settings.buyAmount) break;
+            }
+            break;
+        case 'region':
+            item = game.regions[id];
+            while (true) {
+                const nextCost = Math.floor(item.baseCost * Math.pow(item.costMultiplier, item.swarms + count));
+                if (totalCost + nextCost > currency) break;
+                totalCost += nextCost;
+                count++;
+                if (count >= game.settings.buyAmount) break;
+            }
+            break;
+        case 'planet':
+            item = game.planets[id];
+            while (true) {
+                const nextCost = Math.floor(item.baseCost * Math.pow(item.costMultiplier, item.domes + count));
+                if (totalCost + nextCost > currency) break;
+                totalCost += nextCost;
+                count++;
+                if (count >= game.settings.buyAmount) break;
+            }
+            break;
+    }
+    return { count, totalCost };
 }
 
 // Cost calculations
@@ -411,10 +527,10 @@ function createRipple(event) {
 
 // Buy upgrade
 function buyUpgrade(upgradeId) {
-    const cost = getUpgradeCost(upgradeId);
-    if (game.honey >= cost) {
-        game.honey -= cost;
-        game.upgrades[upgradeId].owned++;
+    const { count, totalCost } = getMaxBuyable('upgrade', upgradeId, game.honey);
+    if (count > 0) {
+        game.honey -= totalCost;
+        game.upgrades[upgradeId].owned += count;
         playSound('coin');
         checkUnlocks();
         checkAchievements();
@@ -499,22 +615,26 @@ function sellAllHoney() {
 
 // Buy flowers
 function buyFlower(flowerId) {
-    const cost = getFlowerCost(flowerId);
-    if (game.money >= cost) {
-        game.money -= cost;
-        game.flowers[flowerId].owned++;
+    const { count, totalCost } = getMaxBuyable('flower', flowerId, game.money);
+    if (count > 0) {
+        game.money -= totalCost;
+        game.flowers[flowerId].owned += count;
+        playSound('coin');
         checkUnlocks();
+        checkAchievements();
         updateUI();
     }
 }
 
 // Buy products
 function buyProduct(productId) {
-    const cost = getProductCost(productId);
-    if (game.money >= cost) {
-        game.money -= cost;
-        game.products[productId].owned++;
+    const { count, totalCost } = getMaxBuyable('product', productId, game.money);
+    if (count > 0) {
+        game.money -= totalCost;
+        game.products[productId].owned += count;
+        playSound('coin');
         checkUnlocks();
+        checkAchievements();
         updateUI();
     }
 }
@@ -600,11 +720,13 @@ function applyMutation(mutationId) {
 
 // Phase 4: Deploy to region
 function deployToRegion(regionId) {
-    const cost = getRegionCost(regionId);
-    if (game.money >= cost) {
-        game.money -= cost;
-        game.regions[regionId].swarms++;
+    const { count, totalCost } = getMaxBuyable('region', regionId, game.money);
+    if (count > 0) {
+        game.money -= totalCost;
+        game.regions[regionId].swarms += count;
+        playSound('coin');
         checkUnlocks();
+        checkAchievements();
         updateUI();
     }
 }
@@ -649,10 +771,11 @@ function applyEcoUpgrade(upgradeId) {
 
 // Phase 5: Colonize planet
 function colonizePlanet(planetId) {
-    const cost = getPlanetCost(planetId);
-    if (game.money >= cost) {
-        game.money -= cost;
-        game.planets[planetId].domes++;
+    const { count, totalCost } = getMaxBuyable('planet', planetId, game.money);
+    if (count > 0) {
+        game.money -= totalCost;
+        game.planets[planetId].domes += count;
+        playSound('coin');
         checkUnlocks();
         checkAchievements();
         updateUI();
@@ -1145,10 +1268,15 @@ function performRebirth() {
 }
 
 function buyRebirthUpgrade(upgradeId) {
+    const upgrade = game.rebirthUpgrades[upgradeId];
+    // Check max level for offlineCap
+    if (upgrade.maxLevel && upgrade.level >= upgrade.maxLevel) return;
+
     const cost = getRebirthUpgradeCost(upgradeId);
     if (game.nectar >= cost) {
         game.nectar -= cost;
-        game.rebirthUpgrades[upgradeId].level++;
+        upgrade.level++;
+        playSound('complete');
         updateRebirthUI();
         saveGame();
     }
@@ -1178,8 +1306,12 @@ function updateRebirthUI() {
         if (costEl) costEl.textContent = cost;
         if (levelEl) levelEl.textContent = upgrade.level;
         if (btnEl) {
-            btnEl.disabled = game.nectar < cost;
-            btnEl.classList.toggle('affordable', game.nectar >= cost);
+            const atMaxLevel = upgrade.maxLevel && upgrade.level >= upgrade.maxLevel;
+            btnEl.disabled = game.nectar < cost || atMaxLevel;
+            btnEl.classList.toggle('affordable', game.nectar >= cost && !atMaxLevel);
+            if (atMaxLevel) {
+                btnEl.classList.add('purchased');
+            }
         }
     }
 
@@ -1313,6 +1445,50 @@ function switchTabByIndex(index) {
     }
 }
 
+// Daily reward system
+function checkDailyReward() {
+    const now = Date.now();
+    const lastReward = game.lastDailyReward || 0;
+    const hoursSinceLastReward = (now - lastReward) / (1000 * 60 * 60);
+
+    // Check if 24 hours have passed
+    if (hoursSinceLastReward >= 24) {
+        // Check if streak should reset (more than 48 hours)
+        if (hoursSinceLastReward >= 48) {
+            game.dailyStreak = 0;
+        }
+        showDailyRewardPopup();
+    }
+}
+
+function showDailyRewardPopup() {
+    const streak = game.dailyStreak + 1;
+    const reward = getDailyReward(streak);
+
+    document.getElementById('streak-count').textContent = streak;
+    document.getElementById('daily-reward-text').textContent = `+${formatNumber(reward)} honey`;
+    document.getElementById('daily-popup').classList.remove('hidden');
+}
+
+function getDailyReward(streak) {
+    // Base reward increases with streak: 100 * streak * (1 + streak/10)
+    return Math.floor(100 * streak * (1 + streak / 10));
+}
+
+function claimDailyReward() {
+    game.dailyStreak++;
+    const reward = getDailyReward(game.dailyStreak);
+
+    game.honey += reward;
+    game.totalHoney += reward;
+    game.lastDailyReward = Date.now();
+
+    document.getElementById('daily-popup').classList.add('hidden');
+    playSound('achievement');
+    saveGame();
+    updateUI();
+}
+
 // Save game
 function saveGame() {
     const saveData = {
@@ -1342,6 +1518,8 @@ function saveGame() {
         totalRebirths: game.totalRebirths,
         rebirthUpgrades: game.rebirthUpgrades,
         settings: game.settings,
+        lastDailyReward: game.lastDailyReward,
+        dailyStreak: game.dailyStreak,
         timestamp: Date.now()
     };
 
@@ -1469,9 +1647,19 @@ function loadGame() {
             document.getElementById('tab-rebirth').style.display = 'block';
         }
 
-        // Offline progress
+        // Load daily reward data
+        if (data.lastDailyReward !== undefined) game.lastDailyReward = data.lastDailyReward;
+        if (data.dailyStreak !== undefined) game.dailyStreak = data.dailyStreak;
+
+        // Offline progress with cap
         if (data.timestamp) {
-            const offlineSeconds = (Date.now() - data.timestamp) / 1000;
+            let offlineSeconds = (Date.now() - data.timestamp) / 1000;
+
+            // Apply offline cap (base 1 hour + upgrades)
+            const capHours = 1 + (game.rebirthUpgrades.offlineCap ? game.rebirthUpgrades.offlineCap.level : 0);
+            const capSeconds = capHours * 3600;
+            offlineSeconds = Math.min(offlineSeconds, capSeconds);
+
             let efficiency = game.mutations.longevity.purchased ? 1.0 : 0.5;
             // Apply rebirth offline bonus
             efficiency *= (1 + game.rebirthUpgrades.offline.level * game.rebirthUpgrades.offline.effect);
@@ -1491,6 +1679,11 @@ function loadGame() {
                 }, 500);
             }
         }
+
+        // Check for daily reward
+        setTimeout(() => {
+            checkDailyReward();
+        }, 1000);
 
         checkUnlocks();
         renderAchievements();
