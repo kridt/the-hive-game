@@ -316,6 +316,19 @@ function buyResearch(researchId) {
 
 // Apply research effects
 function applyResearch(researchId) {
+    // Mark as purchased visually
+    const btn = document.getElementById(`research-${researchId}`);
+    if (btn) {
+        btn.classList.add('purchased');
+        btn.disabled = true;
+        const nameEl = btn.querySelector('.upgrade-name');
+        if (nameEl && !nameEl.textContent.includes('✓')) {
+            nameEl.textContent = '✓ ' + nameEl.textContent;
+        }
+        const costEl = btn.querySelector('.upgrade-cost');
+        if (costEl) costEl.textContent = 'Completed';
+    }
+
     switch (researchId) {
         case 'efficiency':
             game.multipliers.click = 2;
@@ -442,6 +455,19 @@ function buyMutation(mutationId) {
 
 // Apply mutation effects
 function applyMutation(mutationId) {
+    // Mark as purchased visually
+    const btn = document.getElementById(`mutation-${mutationId}`);
+    if (btn) {
+        btn.classList.add('purchased');
+        btn.disabled = true;
+        const nameEl = btn.querySelector('.upgrade-name');
+        if (nameEl && !nameEl.textContent.includes('✓')) {
+            nameEl.textContent = '✓ ' + nameEl.textContent;
+        }
+        const costEl = btn.querySelector('.upgrade-cost');
+        if (costEl) costEl.textContent = 'Completed';
+    }
+
     switch (mutationId) {
         case 'hyperBreeding':
             document.getElementById('generate-dna-btn').textContent = 'Generate DNA (500 honey)';
@@ -474,6 +500,19 @@ function buyEcoUpgrade(upgradeId) {
 }
 
 function applyEcoUpgrade(upgradeId) {
+    // Mark as purchased visually
+    const btn = document.getElementById(`eco-${upgradeId}`);
+    if (btn) {
+        btn.classList.add('purchased');
+        btn.disabled = true;
+        const nameEl = btn.querySelector('.upgrade-name');
+        if (nameEl && !nameEl.textContent.includes('✓')) {
+            nameEl.textContent = '✓ ' + nameEl.textContent;
+        }
+        const costEl = btn.querySelector('.upgrade-cost');
+        if (costEl) costEl.textContent = 'Completed';
+    }
+
     switch (upgradeId) {
         case 'biodiversity':
             game.multipliers.region = 1.5;
@@ -511,6 +550,19 @@ function buySpaceTech(techId) {
 }
 
 function applySpaceTech(techId) {
+    // Mark as purchased visually
+    const btn = document.getElementById(`tech-${techId}`);
+    if (btn) {
+        btn.classList.add('purchased');
+        btn.disabled = true;
+        const nameEl = btn.querySelector('.upgrade-name');
+        if (nameEl && !nameEl.textContent.includes('✓')) {
+            nameEl.textContent = '✓ ' + nameEl.textContent;
+        }
+        const costEl = btn.querySelector('.upgrade-cost');
+        if (costEl) costEl.textContent = 'Completed';
+    }
+
     switch (techId) {
         case 'warpDrive':
             game.multipliers.space = 2;

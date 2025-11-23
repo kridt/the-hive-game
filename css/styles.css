@@ -9,6 +9,40 @@ body {
     margin: 0;
     padding: 20px;
     min-height: 100vh;
+    position: relative;
+}
+
+/* Honeycomb background pattern */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+        radial-gradient(circle at 25% 25%, rgba(255, 215, 0, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(255, 215, 0, 0.03) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* Decorative bees */
+.bee-decoration {
+    position: fixed;
+    font-size: 2em;
+    opacity: 0.1;
+    pointer-events: none;
+    animation: float 6s ease-in-out infinite;
+}
+
+.bee-1 { top: 10%; left: 5%; animation-delay: 0s; }
+.bee-2 { top: 30%; right: 8%; animation-delay: 2s; }
+.bee-3 { bottom: 20%; left: 10%; animation-delay: 4s; }
+
+@keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(5deg); }
 }
 
 #game-container {
@@ -25,6 +59,14 @@ h1 {
     color: #ffd700;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     margin-bottom: 10px;
+}
+
+h1::before {
+    content: '🐝 ';
+}
+
+h1::after {
+    content: ' 🍯';
 }
 
 #main-display {
@@ -91,6 +133,17 @@ section {
     border-radius: 10px;
     padding: 20px;
     border: 1px solid rgba(255, 215, 0, 0.2);
+    position: relative;
+}
+
+/* Honeycomb corner decoration */
+section::before {
+    content: '⬡';
+    position: absolute;
+    top: -8px;
+    right: 10px;
+    font-size: 1.2em;
+    color: rgba(255, 215, 0, 0.3);
 }
 
 h2 {
@@ -653,3 +706,70 @@ footer button:hover {
         opacity: 0;
     }
 }
+
+/* Purchased state for one-time upgrades */
+.research-btn.purchased,
+.mutation-btn.purchased,
+.eco-btn.purchased,
+.space-btn.purchased {
+    background: rgba(34, 197, 94, 0.15);
+    border-color: rgba(34, 197, 94, 0.4);
+    opacity: 0.7;
+}
+
+.research-btn.purchased .upgrade-name,
+.mutation-btn.purchased .upgrade-name,
+.eco-btn.purchased .upgrade-name,
+.space-btn.purchased .upgrade-name {
+    color: #4ade80;
+}
+
+.research-btn.purchased .upgrade-cost,
+.mutation-btn.purchased .upgrade-cost,
+.eco-btn.purchased .upgrade-cost,
+.space-btn.purchased .upgrade-cost {
+    color: #4ade80;
+    font-style: italic;
+}
+
+/* Honey drip effect on header */
+header::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 3px;
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(255, 215, 0, 0.5),
+        rgba(255, 215, 0, 0.8),
+        rgba(255, 215, 0, 0.5),
+        transparent
+    );
+    border-radius: 50%;
+}
+
+header {
+    position: relative;
+    padding-bottom: 15px;
+}
+
+/* Section icons */
+#actions h2::before { content: '🖱️ '; }
+#upgrades h2::before { content: '⬆️ '; }
+#research h2::before { content: '🔬 '; }
+#market-section h2::before { content: '💰 '; }
+#flowers-section h2::before { content: '🌸 '; }
+#products-section h2::before { content: '🏭 '; }
+#genetics-lab h2::before { content: '🧬 '; }
+#mutations h2::before { content: '☣️ '; }
+#pollination-index h2::before { content: '🌍 '; }
+#regions-section h2::before { content: '🗺️ '; }
+#eco-upgrades h2::before { content: '🌱 '; }
+#universe-progress h2::before { content: '🚀 '; }
+#planets-section h2::before { content: '🪐 '; }
+#space-tech h2::before { content: '⚡ '; }
+#achievements-section h2::before { content: '🏆 '; }
+#stats h2::before { content: '📊 '; }
