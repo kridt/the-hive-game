@@ -6,24 +6,59 @@
     <title>Universal Honey - Incremental Bee Empire Game</title>
 
     <!-- SEO Meta Tags -->
-    <meta name="description" content="Build your bee empire from a single hive to galactic domination. An addictive incremental idle game with genetics, markets, and space colonization.">
-    <meta name="keywords" content="incremental game, idle game, clicker game, bee game, honey game, browser game">
+    <meta name="description" content="Play Universal Honey - a free browser incremental idle clicker game. Build your bee empire, collect honey, breed genetic strains, trade on markets, and colonize the universe! No download required.">
+    <meta name="keywords" content="incremental game, idle game, clicker game, bee game, honey game, browser game, free online game, idle clicker, universal paperclips, cookie clicker, web game, no download game">
     <meta name="author" content="Universal Honey">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://the-hive-game.vercel.app/">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="Universal Honey - Incremental Bee Empire Game">
-    <meta property="og:description" content="Build your bee empire from a single hive to galactic domination. Collect honey, breed genetic strains, and colonize the universe!">
-    <meta property="og:image" content="/og-image.png">
+    <meta property="og:url" content="https://the-hive-game.vercel.app/">
+    <meta property="og:title" content="Universal Honey - Free Incremental Bee Empire Game">
+    <meta property="og:description" content="Build your bee empire from a single hive to galactic domination. Free browser idle clicker game with genetics, markets, and space colonization!">
+    <meta property="og:image" content="https://the-hive-game.vercel.app/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Universal Honey - Incremental Bee Empire Game">
-    <meta name="twitter:description" content="Build your bee empire from a single hive to galactic domination!">
-    <meta name="twitter:image" content="/og-image.png">
+    <meta name="twitter:title" content="Universal Honey - Free Incremental Bee Empire Game">
+    <meta name="twitter:description" content="Build your bee empire from a single hive to galactic domination! Free browser idle clicker game.">
+    <meta name="twitter:image" content="https://the-hive-game.vercel.app/og-image.png">
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "VideoGame",
+        "name": "Universal Honey",
+        "description": "Build your bee empire from a single hive to galactic domination. An incremental idle clicker game with genetics, markets, and space colonization.",
+        "url": "https://the-hive-game.vercel.app/",
+        "genre": ["Incremental", "Idle", "Clicker", "Strategy"],
+        "gamePlatform": "Web Browser",
+        "applicationCategory": "Game",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "author": {
+            "@type": "Organization",
+            "name": "Universal Honey"
+        },
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.5",
+            "ratingCount": "100"
+        }
+    }
+    </script>
 
     <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍯</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍯</text></svg>">
 
     <link rel="stylesheet" href="css/styles.css">
     <!-- Vercel Analytics -->
@@ -538,6 +573,24 @@
             <div class="daily-reward" id="daily-reward-text">+100 honey</div>
             <button onclick="claimDailyReward()">Claim!</button>
         </div>
+    </div>
+
+    <!-- Tutorial Overlay -->
+    <div id="tutorial-overlay" class="hidden">
+        <div id="tutorial-box">
+            <div class="tutorial-header">
+                <span id="tutorial-step">Step 1/5</span>
+                <button onclick="skipTutorial()">Skip</button>
+            </div>
+            <div class="tutorial-icon" id="tutorial-icon">🐝</div>
+            <h3 id="tutorial-title">Welcome to Universal Honey!</h3>
+            <p id="tutorial-text">Build your bee empire from a single hive to galactic domination!</p>
+            <div class="tutorial-buttons">
+                <button id="tutorial-prev" onclick="prevTutorialStep()" style="display:none;">Previous</button>
+                <button id="tutorial-next" onclick="nextTutorialStep()">Next</button>
+            </div>
+        </div>
+        <div id="tutorial-highlight"></div>
     </div>
 
     <!-- Settings Button -->

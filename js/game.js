@@ -1503,6 +1503,92 @@ function switchTabByIndex(index) {
     }
 }
 
+// Tutorial system
+const tutorialSteps = [
+    {
+        icon: '🐝',
+        title: 'Welcome to Universal Honey!',
+        text: 'Build your bee empire from a single hive to galactic domination! Let me show you the basics.'
+    },
+    {
+        icon: '🖱️',
+        title: 'Collect Honey',
+        text: 'Click the big golden button to collect honey. You can also press SPACE on your keyboard!'
+    },
+    {
+        icon: '⬆️',
+        title: 'Buy Upgrades',
+        text: 'Spend honey on Worker Bees and Hives. They automatically produce honey for you every second!'
+    },
+    {
+        icon: '🔬',
+        title: 'Research',
+        text: 'Unlock research to improve efficiency and access new features like the Market and Genetics Lab.'
+    },
+    {
+        icon: '🚀',
+        title: 'Expand Your Empire',
+        text: 'As you progress, you\'ll unlock Markets, Genetics, Global Pollination, and even Space Colonization. Good luck!'
+    }
+];
+
+let currentTutorialStep = 0;
+
+function showTutorial() {
+    currentTutorialStep = 0;
+    updateTutorialStep();
+    document.getElementById('tutorial-overlay').classList.remove('hidden');
+}
+
+function updateTutorialStep() {
+    const step = tutorialSteps[currentTutorialStep];
+    document.getElementById('tutorial-step').textContent = `Step ${currentTutorialStep + 1}/${tutorialSteps.length}`;
+    document.getElementById('tutorial-icon').textContent = step.icon;
+    document.getElementById('tutorial-title').textContent = step.title;
+    document.getElementById('tutorial-text').textContent = step.text;
+
+    // Show/hide prev button
+    document.getElementById('tutorial-prev').style.display = currentTutorialStep > 0 ? 'block' : 'none';
+
+    // Change next button text on last step
+    const nextBtn = document.getElementById('tutorial-next');
+    nextBtn.textContent = currentTutorialStep === tutorialSteps.length - 1 ? 'Start Playing!' : 'Next';
+}
+
+function nextTutorialStep() {
+    if (currentTutorialStep < tutorialSteps.length - 1) {
+        currentTutorialStep++;
+        updateTutorialStep();
+    } else {
+        completeTutorial();
+    }
+}
+
+function prevTutorialStep() {
+    if (currentTutorialStep > 0) {
+        currentTutorialStep--;
+        updateTutorialStep();
+    }
+}
+
+function skipTutorial() {
+    completeTutorial();
+}
+
+function completeTutorial() {
+    document.getElementById('tutorial-overlay').classList.add('hidden');
+    localStorage.setItem('tutorialCompleted', 'true');
+}
+
+function checkTutorial() {
+    const completed = localStorage.getItem('tutorialCompleted');
+    if (!completed) {
+        setTimeout(() => {
+            showTutorial();
+        }, 500);
+    }
+}
+
 // Daily reward system
 function checkDailyReward() {
     const now = Date.now();
@@ -1770,6 +1856,7 @@ window.onload = function() {
     checkUnlocks();
     updateUI();
     setupKeyboardShortcuts();
+    checkTutorial();
     setInterval(gameLoop, 100);
 };
 

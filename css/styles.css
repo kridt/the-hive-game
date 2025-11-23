@@ -1132,6 +1132,116 @@ kbd {
     transform: scale(1.05);
 }
 
+/* Tutorial */
+#tutorial-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 3000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#tutorial-overlay.hidden {
+    display: none;
+}
+
+#tutorial-box {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 2px solid #ffd700;
+    border-radius: 15px;
+    padding: 30px;
+    max-width: 400px;
+    text-align: center;
+    position: relative;
+    z-index: 3001;
+    animation: popIn 0.3s ease;
+}
+
+.tutorial-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.tutorial-header span {
+    color: #888;
+    font-size: 0.9em;
+}
+
+.tutorial-header button {
+    background: none;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+.tutorial-header button:hover {
+    color: #fff;
+}
+
+.tutorial-icon {
+    font-size: 3em;
+    margin-bottom: 15px;
+}
+
+#tutorial-box h3 {
+    color: #ffd700;
+    margin: 0 0 15px;
+    font-size: 1.3em;
+}
+
+#tutorial-box p {
+    color: #e0e0e0;
+    margin: 0 0 20px;
+    line-height: 1.5;
+}
+
+.tutorial-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.tutorial-buttons button {
+    padding: 10px 25px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+#tutorial-next {
+    background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
+    color: #1a1a2e;
+}
+
+#tutorial-prev {
+    background: rgba(255, 255, 255, 0.1);
+    color: #e0e0e0;
+}
+
+.tutorial-buttons button:hover {
+    transform: scale(1.05);
+}
+
+#tutorial-highlight {
+    position: absolute;
+    border: 3px solid #ffd700;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    pointer-events: none;
+    transition: all 0.3s ease;
+    display: none;
+}
+
 /* Tooltips */
 .tooltip {
     position: relative;
