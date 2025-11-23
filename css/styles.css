@@ -18,7 +18,7 @@ body {
 
 header {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 }
 
 h1 {
@@ -33,9 +33,52 @@ h1 {
     color: #ffd700;
 }
 
+#secondary-display {
+    font-size: 1.5em;
+    color: #4ade80;
+    margin-top: 5px;
+}
+
 #honey-per-second {
     font-size: 1.2em;
     color: #aaa;
+}
+
+/* Tab Navigation */
+#tabs {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 20px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    border-radius: 8px 8px 0 0;
+    color: #aaa;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.95em;
+}
+
+.tab-btn:hover {
+    background: rgba(255, 215, 0, 0.1);
+}
+
+.tab-btn.active {
+    background: rgba(255, 215, 0, 0.2);
+    color: #ffd700;
+    border-bottom-color: transparent;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
 }
 
 main {
@@ -56,6 +99,18 @@ h2 {
     font-size: 1.2em;
     border-bottom: 1px solid rgba(255, 215, 0, 0.3);
     padding-bottom: 10px;
+}
+
+h3 {
+    color: #ffd700;
+    font-size: 1em;
+    margin: 15px 0 10px;
+}
+
+.section-info {
+    color: #888;
+    font-size: 0.9em;
+    margin: 0 0 15px;
 }
 
 #collect-btn {
@@ -87,13 +142,19 @@ h2 {
     margin-top: 5px;
 }
 
-#upgrade-list, #research-list {
+#upgrade-list, #research-list, #flower-list, #products-list, #mutation-list {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
-.upgrade-btn, .research-btn {
+#bee-strains {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.upgrade-btn, .research-btn, .strain-btn, .mutation-btn {
     width: 100%;
     padding: 15px;
     text-align: left;
@@ -105,17 +166,26 @@ h2 {
     transition: background 0.2s, border-color 0.2s;
 }
 
-.upgrade-btn:hover:not(:disabled), .research-btn:hover:not(:disabled) {
+.upgrade-btn:hover:not(:disabled),
+.research-btn:hover:not(:disabled),
+.strain-btn:hover:not(:disabled),
+.mutation-btn:hover:not(:disabled) {
     background: rgba(255, 215, 0, 0.2);
     border-color: rgba(255, 215, 0, 0.5);
 }
 
-.upgrade-btn:disabled, .research-btn:disabled {
+.upgrade-btn:disabled,
+.research-btn:disabled,
+.strain-btn:disabled,
+.mutation-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }
 
-.upgrade-btn.affordable, .research-btn.affordable {
+.upgrade-btn.affordable,
+.research-btn.affordable,
+.strain-btn.affordable,
+.mutation-btn.affordable {
     border-color: #ffd700;
     box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
 }
@@ -139,6 +209,119 @@ h2 {
 .upgrade-owned {
     font-size: 0.85em;
     color: #888;
+}
+
+/* Market styles */
+.market-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+}
+
+.market-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.market-actions button {
+    flex: 1;
+    min-width: 80px;
+    padding: 10px;
+    background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+    border: none;
+    border-radius: 5px;
+    color: #1a1a2e;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+.market-actions button:hover {
+    transform: scale(1.05);
+}
+
+.market-actions button:active {
+    transform: scale(0.95);
+}
+
+/* DNA Points */
+#dna-points {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: rgba(147, 51, 234, 0.2);
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 1.1em;
+}
+
+#dna-count {
+    color: #a78bfa;
+    font-weight: bold;
+}
+
+#generate-dna-btn {
+    padding: 8px 15px;
+    background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%);
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    font-size: 0.85em;
+}
+
+#generate-dna-btn:hover {
+    box-shadow: 0 0 10px rgba(167, 139, 250, 0.5);
+}
+
+#generate-dna-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Strain buttons */
+.strain-btn {
+    background: rgba(147, 51, 234, 0.1);
+    border-color: rgba(147, 51, 234, 0.3);
+}
+
+.strain-btn:hover:not(:disabled) {
+    background: rgba(147, 51, 234, 0.2);
+    border-color: rgba(147, 51, 234, 0.5);
+}
+
+.strain-btn.affordable {
+    border-color: #a78bfa;
+    box-shadow: 0 0 10px rgba(167, 139, 250, 0.3);
+}
+
+.strain-btn .upgrade-name {
+    color: #a78bfa;
+}
+
+/* Mutation buttons */
+.mutation-btn {
+    background: rgba(236, 72, 153, 0.1);
+    border-color: rgba(236, 72, 153, 0.3);
+}
+
+.mutation-btn:hover:not(:disabled) {
+    background: rgba(236, 72, 153, 0.2);
+    border-color: rgba(236, 72, 153, 0.5);
+}
+
+.mutation-btn.affordable {
+    border-color: #f472b6;
+    box-shadow: 0 0 10px rgba(244, 114, 182, 0.3);
+}
+
+.mutation-btn .upgrade-name {
+    color: #f472b6;
 }
 
 #stats {
@@ -177,15 +360,6 @@ footer button:hover {
     color: #888;
 }
 
-#ad-container {
-    max-width: 800px;
-    margin: 20px auto;
-    text-align: center;
-    min-height: 90px;
-    background: rgba(255, 255, 255, 0.02);
-    border-radius: 5px;
-}
-
 /* Responsive */
 @media (max-width: 600px) {
     body {
@@ -198,5 +372,17 @@ footer button:hover {
 
     section {
         padding: 15px;
+    }
+
+    .market-actions button {
+        min-width: 60px;
+        padding: 8px;
+        font-size: 0.9em;
+    }
+
+    #dna-points {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
     }
 }
