@@ -773,3 +773,327 @@ header {
 #space-tech h2::before { content: '⚡ '; }
 #achievements-section h2::before { content: '🏆 '; }
 #stats h2::before { content: '📊 '; }
+#rebirth-info h2::before { content: '🔄 '; }
+#rebirth-upgrades h2::before { content: '✨ '; }
+
+/* Rebirth tab styles */
+#nectar-display {
+    padding: 15px;
+    background: rgba(168, 85, 247, 0.2);
+    border-radius: 8px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+#nectar-count {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #a855f7;
+}
+
+.nectar-bonus {
+    font-size: 0.9em;
+    color: #c084fc;
+    margin-top: 5px;
+}
+
+#rebirth-preview {
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+#nectar-gain {
+    font-weight: bold;
+    color: #a855f7;
+}
+
+.rebirth-requirement {
+    font-size: 0.85em;
+    color: #888;
+    margin-top: 5px;
+}
+
+#rebirth-btn {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.2em;
+    background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    color: white;
+    font-weight: bold;
+    transition: transform 0.1s, box-shadow 0.1s;
+}
+
+#rebirth-btn:hover:not(:disabled) {
+    transform: scale(1.02);
+    box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
+}
+
+#rebirth-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+#rebirth-btn .btn-info {
+    display: block;
+    font-size: 0.6em;
+    font-weight: normal;
+    margin-top: 5px;
+}
+
+.rebirth-upgrade-btn {
+    width: 100%;
+    padding: 15px;
+    text-align: left;
+    background: rgba(168, 85, 247, 0.1);
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    border-radius: 8px;
+    cursor: pointer;
+    color: #e0e0e0;
+    transition: background 0.2s, border-color 0.2s;
+    margin-bottom: 10px;
+}
+
+.rebirth-upgrade-btn:hover:not(:disabled) {
+    background: rgba(168, 85, 247, 0.2);
+    border-color: rgba(168, 85, 247, 0.5);
+}
+
+.rebirth-upgrade-btn.affordable {
+    border-color: #a855f7;
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.3);
+}
+
+.rebirth-upgrade-btn .upgrade-name {
+    color: #c084fc;
+}
+
+.rebirth-upgrade-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Settings button */
+#settings-btn {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: rgba(255, 215, 0, 0.2);
+    border: 2px solid rgba(255, 215, 0, 0.4);
+    font-size: 1.3em;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+#settings-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: rotate(45deg);
+}
+
+/* Settings popup */
+#settings-popup {
+    position: fixed;
+    bottom: 80px;
+    left: 20px;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 10px;
+    padding: 15px;
+    width: 280px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    z-index: 1001;
+}
+
+#settings-popup.hidden {
+    display: none;
+}
+
+.settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.settings-header h3 {
+    margin: 0;
+    color: #ffd700;
+}
+
+.settings-header button {
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 1.2em;
+    cursor: pointer;
+}
+
+.settings-header button:hover {
+    color: #fff;
+}
+
+.setting-item {
+    margin-bottom: 15px;
+}
+
+.setting-item label {
+    display: block;
+    margin-bottom: 8px;
+    color: #aaa;
+    font-size: 0.9em;
+}
+
+.setting-item input[type="range"] {
+    width: 70%;
+    vertical-align: middle;
+}
+
+#volume-value {
+    margin-left: 10px;
+    color: #ffd700;
+}
+
+.theme-toggle {
+    display: flex;
+    gap: 5px;
+}
+
+.theme-toggle button {
+    flex: 1;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    color: #aaa;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.theme-toggle button.active {
+    background: rgba(255, 215, 0, 0.2);
+    border-color: #ffd700;
+    color: #ffd700;
+}
+
+.shortcuts-info {
+    font-size: 0.85em;
+    color: #888;
+}
+
+.shortcuts-info div {
+    margin: 5px 0;
+}
+
+kbd {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: monospace;
+    color: #ffd700;
+}
+
+/* Offline popup (same as achievement) */
+#offline-popup {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 2px solid #4ade80;
+    border-radius: 10px;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    animation: slideIn 0.5s ease, slideOut 0.5s ease 4s forwards;
+}
+
+#offline-popup.hidden {
+    display: none;
+}
+
+/* Light theme */
+body.light-theme {
+    background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+    color: #1a1a2e;
+}
+
+body.light-theme::before {
+    background-image:
+        radial-gradient(circle at 25% 25%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(255, 215, 0, 0.1) 0%, transparent 50%);
+}
+
+body.light-theme section {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: rgba(255, 215, 0, 0.4);
+}
+
+body.light-theme .upgrade-btn,
+body.light-theme .research-btn,
+body.light-theme .strain-btn,
+body.light-theme .mutation-btn,
+body.light-theme .region-btn,
+body.light-theme .eco-btn,
+body.light-theme .planet-btn,
+body.light-theme .space-btn,
+body.light-theme .rebirth-upgrade-btn {
+    color: #1a1a2e;
+}
+
+body.light-theme .upgrade-info,
+body.light-theme .upgrade-owned,
+body.light-theme .upgrade-cost,
+body.light-theme #honey-per-second,
+body.light-theme #stats,
+body.light-theme .section-info {
+    color: #666;
+}
+
+body.light-theme .tab-btn {
+    background: rgba(0, 0, 0, 0.05);
+    color: #666;
+}
+
+body.light-theme .tab-btn.active {
+    background: rgba(255, 215, 0, 0.3);
+    color: #b8860b;
+}
+
+body.light-theme #settings-popup {
+    background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+    border-color: rgba(255, 215, 0, 0.5);
+}
+
+body.light-theme .setting-item label,
+body.light-theme .shortcuts-info {
+    color: #666;
+}
+
+body.light-theme .achievement {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+body.light-theme footer button {
+    background: rgba(0, 0, 0, 0.1);
+    border-color: rgba(0, 0, 0, 0.2);
+    color: #1a1a2e;
+}
+
+body.light-theme #settings-btn {
+    background: rgba(0, 0, 0, 0.1);
+    border-color: rgba(0, 0, 0, 0.2);
+}

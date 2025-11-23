@@ -56,6 +56,7 @@
             <button class="tab-btn" onclick="switchTab('genetics')" id="tab-genetics" style="display:none;">Genetics</button>
             <button class="tab-btn" onclick="switchTab('global')" id="tab-global" style="display:none;">Global</button>
             <button class="tab-btn" onclick="switchTab('space')" id="tab-space" style="display:none;">Space</button>
+            <button class="tab-btn" onclick="switchTab('rebirth')" id="tab-rebirth" style="display:none;">Rebirth</button>
         </nav>
 
         <main>
@@ -416,6 +417,63 @@
                 </section>
             </div>
 
+            <!-- Rebirth Tab (Prestige) -->
+            <div id="rebirth-tab" class="tab-content">
+                <section id="rebirth-info">
+                    <h2>Rebirth System</h2>
+                    <p class="section-info">Reset your progress for permanent bonuses</p>
+
+                    <div id="nectar-display">
+                        <div>Royal Nectar: <span id="nectar-count">0</span></div>
+                        <div class="nectar-bonus">Current Bonus: <span id="nectar-bonus">0</span>% production</div>
+                    </div>
+
+                    <div id="rebirth-preview">
+                        <div>Rebirth will grant: <span id="nectar-gain">0</span> Royal Nectar</div>
+                        <div class="rebirth-requirement">Requires 1M total honey</div>
+                    </div>
+
+                    <button id="rebirth-btn" onclick="performRebirth()" disabled>
+                        Rebirth
+                        <span class="btn-info">Reset for Royal Nectar</span>
+                    </button>
+                </section>
+
+                <section id="rebirth-upgrades">
+                    <h2>Permanent Upgrades</h2>
+                    <p class="section-info">Spend Royal Nectar on permanent bonuses</p>
+                    <div id="rebirth-upgrade-list">
+                        <button class="rebirth-upgrade-btn" id="rebirth-production" onclick="buyRebirthUpgrade('production')">
+                            <div class="upgrade-name">Enhanced Production</div>
+                            <div class="upgrade-info">+10% base production per level</div>
+                            <div class="upgrade-cost">Cost: <span id="production-nectar-cost">1</span> Nectar</div>
+                            <div class="upgrade-owned">Level: <span id="production-level">0</span></div>
+                        </button>
+
+                        <button class="rebirth-upgrade-btn" id="rebirth-clicking" onclick="buyRebirthUpgrade('clicking')">
+                            <div class="upgrade-name">Golden Fingers</div>
+                            <div class="upgrade-info">+25% click value per level</div>
+                            <div class="upgrade-cost">Cost: <span id="clicking-nectar-cost">2</span> Nectar</div>
+                            <div class="upgrade-owned">Level: <span id="clicking-level">0</span></div>
+                        </button>
+
+                        <button class="rebirth-upgrade-btn" id="rebirth-offline" onclick="buyRebirthUpgrade('offline')">
+                            <div class="upgrade-name">Eternal Workers</div>
+                            <div class="upgrade-info">+20% offline efficiency per level</div>
+                            <div class="upgrade-cost">Cost: <span id="offline-nectar-cost">3</span> Nectar</div>
+                            <div class="upgrade-owned">Level: <span id="offline-level">0</span></div>
+                        </button>
+
+                        <button class="rebirth-upgrade-btn" id="rebirth-starting" onclick="buyRebirthUpgrade('starting')">
+                            <div class="upgrade-name">Head Start</div>
+                            <div class="upgrade-info">Start with bonus honey after rebirth</div>
+                            <div class="upgrade-cost">Cost: <span id="starting-nectar-cost">5</span> Nectar</div>
+                            <div class="upgrade-owned">Level: <span id="starting-level">0</span></div>
+                        </button>
+                    </div>
+                </section>
+            </div>
+
             <!-- Achievements Section -->
             <section id="achievements-section">
                 <h2>Achievements <span id="achievement-count">(0/0)</span></h2>
@@ -444,6 +502,48 @@
         <div class="achievement-text">
             <div class="achievement-title">Achievement Unlocked!</div>
             <div class="achievement-name" id="popup-achievement-name"></div>
+        </div>
+    </div>
+
+    <!-- Offline Notification -->
+    <div id="offline-popup" class="hidden">
+        <div class="achievement-icon">💤</div>
+        <div class="achievement-text">
+            <div class="achievement-title">Welcome Back!</div>
+            <div class="achievement-name" id="offline-earnings"></div>
+        </div>
+    </div>
+
+    <!-- Settings Button -->
+    <button id="settings-btn" onclick="toggleSettings()">⚙️</button>
+
+    <!-- Settings Popup -->
+    <div id="settings-popup" class="hidden">
+        <div class="settings-header">
+            <h3>Settings</h3>
+            <button onclick="toggleSettings()">✕</button>
+        </div>
+        <div class="settings-content">
+            <div class="setting-item">
+                <label>Volume</label>
+                <input type="range" id="volume-slider" min="0" max="100" value="50" oninput="updateVolume(this.value)">
+                <span id="volume-value">50%</span>
+            </div>
+            <div class="setting-item">
+                <label>Theme</label>
+                <div class="theme-toggle">
+                    <button id="dark-theme-btn" class="active" onclick="setTheme('dark')">Dark</button>
+                    <button id="light-theme-btn" onclick="setTheme('light')">Light</button>
+                </div>
+            </div>
+            <div class="setting-item">
+                <label>Keyboard Shortcuts</label>
+                <div class="shortcuts-info">
+                    <div><kbd>Space</kbd> Collect honey</div>
+                    <div><kbd>1-6</kbd> Switch tabs</div>
+                    <div><kbd>S</kbd> Save game</div>
+                </div>
+            </div>
         </div>
     </div>
 

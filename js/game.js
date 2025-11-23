@@ -112,7 +112,23 @@ const game = {
     },
 
     // Achievements
-    achievements: {}
+    achievements: {},
+
+    // Rebirth/Prestige
+    nectar: 0,
+    totalRebirths: 0,
+    rebirthUpgrades: {
+        production: { level: 0, baseCost: 1, costMultiplier: 1.5, effect: 0.10 },
+        clicking: { level: 0, baseCost: 2, costMultiplier: 1.5, effect: 0.25 },
+        offline: { level: 0, baseCost: 3, costMultiplier: 1.5, effect: 0.20 },
+        starting: { level: 0, baseCost: 5, costMultiplier: 2, effect: 1000 }
+    },
+
+    // Settings
+    settings: {
+        volume: 50,
+        theme: 'dark'
+    }
 };
 
 // Achievement definitions
@@ -301,6 +317,9 @@ function getHoneyPerSecond() {
     // Apply global multiplier
     hps *= game.multipliers.global;
 
+    // Apply rebirth production bonus
+    hps *= (1 + game.rebirthUpgrades.production.level * game.rebirthUpgrades.production.effect);
+
     return hps;
 }
 
@@ -320,17 +339,28 @@ function getHoneyPrice() {
 
 // Collect honey (click action)
 function collectHoney(event) {
-    const amount = game.clickValue * game.multipliers.click;
+    const clickBonus = 1 + (game.rebirthUpgrades.clicking.level * game.rebirthUpgrades.clicking.effect);
+    const amount = game.clickValue * game.multipliers.click * clickBonus;
     game.honey += amount;
     game.totalHoney += amount;
     game.totalClicks++;
 
-    if (event) {
+    // Create floating text - from click position or button center
+    const btn = document.getElementById('collect-btn');
+    const rect = btn.getBoundingClientRect();
+
+    if (event && event.clientX) {
         createFloatingText(event, amount);
         createRipple(event);
+    } else {
+        // Keyboard press - create from button center
+        const centerEvent = {
+            clientX: rect.left + rect.width / 2,
+            clientY: rect.top + rect.height / 2
+        };
+        createFloatingText(centerEvent, amount);
     }
 
-    const btn = document.getElementById('collect-btn');
     btn.classList.remove('clicked');
     void btn.offsetWidth;
     btn.classList.add('clicked');
@@ -952,7 +982,298 @@ function gameLoop() {
     updateMarket();
     updatePollination();
     checkAchievements();
+    updateRebirthUI();
     updateUI();
+}
+
+// Rebirth system
+function getNectarGain() {
+    // Formula: sqrt(totalHoney / 1,000,000)
+    return Math.floor(Math.sqrt(game.totalHoney / 1000000));
+}
+
+function getRebirthUpgradeCost(upgradeId) {
+    const upgrade = game.rebirthUpgrades[upgradeId];
+    return Math.floor(upgrade.baseCost * Math.pow(upgrade.costMultiplier, upgrade.level));
+}
+
+function performRebirth() {
+    const nectarGain = getNectarGain();
+    if (nectarGain < 1 || game.totalHoney < 1000000) return;
+
+    if (!confirm(`Are you sure you want to rebirth? You will gain ${nectarGain} Royal Nectar but lose all progress except permanent upgrades.`)) {
+        return;
+    }
+
+    // Add nectar
+    game.nectar += nectarGain;
+    game.totalRebirths++;
+
+    // Reset game state but keep rebirth upgrades
+    const savedNectar = game.nectar;
+    const savedRebirths = game.totalRebirths;
+    const savedUpgrades = JSON.parse(JSON.stringify(game.rebirthUpgrades));
+    const savedSettings = JSON.parse(JSON.stringify(game.settings));
+    const savedAchievements = JSON.parse(JSON.stringify(game.achievements));
+
+    // Reset to defaults
+    game.honey = 0;
+    game.totalHoney = 0;
+    game.totalClicks = 0;
+    game.clickValue = 1;
+    game.money = 0;
+    game.totalMoney = 0;
+    game.dna = 0;
+    game.earthPollinated = 0;
+    game.universePollinated = 0;
+
+    // Reset upgrades
+    for (const upgrade of Object.values(game.upgrades)) {
+        upgrade.owned = 0;
+    }
+
+    // Reset research
+    for (const research of Object.values(game.research)) {
+        research.purchased = false;
+    }
+
+    // Reset flowers
+    for (const flower of Object.values(game.flowers)) {
+        flower.owned = 0;
+    }
+
+    // Reset products
+    for (const product of Object.values(game.products)) {
+        product.owned = 0;
+    }
+
+    // Reset strains
+    for (const strain of Object.values(game.strains)) {
+        strain.level = 0;
+    }
+
+    // Reset mutations
+    for (const mutation of Object.values(game.mutations)) {
+        mutation.purchased = false;
+    }
+
+    // Reset regions
+    for (const region of Object.values(game.regions)) {
+        region.swarms = 0;
+    }
+
+    // Reset eco upgrades
+    for (const upgrade of Object.values(game.ecoUpgrades)) {
+        upgrade.purchased = false;
+    }
+
+    // Reset planets
+    for (const planet of Object.values(game.planets)) {
+        planet.domes = 0;
+    }
+
+    // Reset space tech
+    for (const tech of Object.values(game.spaceTech)) {
+        tech.purchased = false;
+    }
+
+    // Reset multipliers
+    game.multipliers = {
+        workerBee: 1,
+        hive: 1,
+        click: 1,
+        global: 1,
+        price: 1,
+        region: 1,
+        space: 1
+    };
+
+    // Restore persistent data
+    game.nectar = savedNectar;
+    game.totalRebirths = savedRebirths;
+    game.rebirthUpgrades = savedUpgrades;
+    game.settings = savedSettings;
+    game.achievements = savedAchievements;
+
+    // Apply head start bonus
+    if (game.rebirthUpgrades.starting.level > 0) {
+        const startingHoney = game.rebirthUpgrades.starting.level * game.rebirthUpgrades.starting.effect;
+        game.honey = startingHoney;
+        game.totalHoney = startingHoney;
+    }
+
+    // Reset UI visibility
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        if (btn.id && btn.id !== 'tab-rebirth') {
+            btn.style.display = btn.textContent === 'Production' ? 'block' : 'none';
+        }
+    });
+
+    // Show rebirth tab if player has nectar
+    if (game.nectar > 0) {
+        document.getElementById('tab-rebirth').style.display = 'block';
+    }
+
+    // Hide secondary displays
+    document.getElementById('secondary-display').style.display = 'none';
+    document.getElementById('total-money-stat').style.display = 'none';
+    document.getElementById('flower-bonus-stat').style.display = 'none';
+
+    // Reset button visibility
+    document.querySelectorAll('.upgrade-btn, .research-btn, .strain-btn, .mutation-btn, .region-btn, .eco-btn, .planet-btn, .space-btn').forEach(btn => {
+        btn.classList.remove('purchased');
+        btn.disabled = false;
+        const nameEl = btn.querySelector('.upgrade-name');
+        if (nameEl) nameEl.textContent = nameEl.textContent.replace('✓ ', '');
+    });
+
+    // Switch to production tab
+    switchTab('production');
+    document.querySelector('.tab-btn').click();
+
+    saveGame();
+    location.reload();
+}
+
+function buyRebirthUpgrade(upgradeId) {
+    const cost = getRebirthUpgradeCost(upgradeId);
+    if (game.nectar >= cost) {
+        game.nectar -= cost;
+        game.rebirthUpgrades[upgradeId].level++;
+        updateRebirthUI();
+        saveGame();
+    }
+}
+
+function updateRebirthUI() {
+    // Nectar display
+    document.getElementById('nectar-count').textContent = game.nectar;
+    const totalBonus = game.rebirthUpgrades.production.level * 10;
+    document.getElementById('nectar-bonus').textContent = totalBonus;
+
+    // Nectar gain preview
+    const nectarGain = getNectarGain();
+    document.getElementById('nectar-gain').textContent = nectarGain;
+
+    // Rebirth button
+    const rebirthBtn = document.getElementById('rebirth-btn');
+    rebirthBtn.disabled = game.totalHoney < 1000000;
+
+    // Update rebirth upgrade buttons
+    for (const [id, upgrade] of Object.entries(game.rebirthUpgrades)) {
+        const cost = getRebirthUpgradeCost(id);
+        const costEl = document.getElementById(`${id}-nectar-cost`);
+        const levelEl = document.getElementById(`${id}-level`);
+        const btnEl = document.getElementById(`rebirth-${id}`);
+
+        if (costEl) costEl.textContent = cost;
+        if (levelEl) levelEl.textContent = upgrade.level;
+        if (btnEl) {
+            btnEl.disabled = game.nectar < cost;
+            btnEl.classList.toggle('affordable', game.nectar >= cost);
+        }
+    }
+
+    // Show rebirth tab when player reaches 100k honey
+    if (game.totalHoney >= 100000) {
+        document.getElementById('tab-rebirth').style.display = 'block';
+    }
+}
+
+// Settings functions
+function toggleSettings() {
+    const popup = document.getElementById('settings-popup');
+    popup.classList.toggle('hidden');
+}
+
+function setTheme(theme) {
+    game.settings.theme = theme;
+    document.body.classList.toggle('light-theme', theme === 'light');
+
+    // Update theme buttons
+    document.getElementById('dark-theme-btn').classList.toggle('active', theme === 'dark');
+    document.getElementById('light-theme-btn').classList.toggle('active', theme === 'light');
+
+    saveGame();
+}
+
+function updateVolume(value) {
+    game.settings.volume = parseInt(value);
+    document.getElementById('volume-value').textContent = value + '%';
+    // Future: Apply volume to audio elements
+}
+
+// Offline notification
+function showOfflineNotification(honey, money) {
+    const popup = document.getElementById('offline-popup');
+    let message = '';
+
+    if (honey > 0 && money > 0) {
+        message = `+${formatNumber(Math.floor(honey))} honey, +${formatNumber(Math.floor(money))} coins`;
+    } else if (honey > 0) {
+        message = `+${formatNumber(Math.floor(honey))} honey`;
+    } else if (money > 0) {
+        message = `+${formatNumber(Math.floor(money))} coins`;
+    }
+
+    if (message) {
+        document.getElementById('offline-earnings').textContent = message;
+        popup.classList.remove('hidden');
+        popup.style.animation = 'none';
+        void popup.offsetWidth;
+        popup.style.animation = 'slideIn 0.5s ease, slideOut 0.5s ease 4s forwards';
+
+        setTimeout(() => {
+            popup.classList.add('hidden');
+        }, 4500);
+    }
+}
+
+// Keyboard shortcuts
+function setupKeyboardShortcuts() {
+    document.addEventListener('keydown', (e) => {
+        // Ignore if typing in input
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+        switch (e.key.toLowerCase()) {
+            case ' ':
+                e.preventDefault();
+                collectHoney();
+                break;
+            case '1':
+                switchTabByIndex(0);
+                break;
+            case '2':
+                switchTabByIndex(1);
+                break;
+            case '3':
+                switchTabByIndex(2);
+                break;
+            case '4':
+                switchTabByIndex(3);
+                break;
+            case '5':
+                switchTabByIndex(4);
+                break;
+            case '6':
+                switchTabByIndex(5);
+                break;
+            case 's':
+                saveGame();
+                break;
+        }
+    });
+}
+
+function switchTabByIndex(index) {
+    const tabs = ['production', 'market', 'genetics', 'global', 'space', 'rebirth'];
+    const tabBtn = document.getElementById(`tab-${tabs[index]}`);
+    if (tabBtn && tabBtn.style.display !== 'none') {
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById(`${tabs[index]}-tab`).classList.add('active');
+        tabBtn.classList.add('active');
+    }
 }
 
 // Save game
@@ -980,6 +1301,10 @@ function saveGame() {
         multipliers: game.multipliers,
         market: game.market,
         achievements: game.achievements,
+        nectar: game.nectar,
+        totalRebirths: game.totalRebirths,
+        rebirthUpgrades: game.rebirthUpgrades,
+        settings: game.settings,
         timestamp: Date.now()
     };
 
@@ -1077,10 +1402,42 @@ function loadGame() {
         if (data.market) game.market = { ...game.market, ...data.market };
         if (data.achievements) game.achievements = data.achievements;
 
+        // Load rebirth data
+        if (data.nectar !== undefined) game.nectar = data.nectar;
+        if (data.totalRebirths !== undefined) game.totalRebirths = data.totalRebirths;
+        if (data.rebirthUpgrades) {
+            for (const [id, upgrade] of Object.entries(data.rebirthUpgrades)) {
+                if (game.rebirthUpgrades[id]) {
+                    game.rebirthUpgrades[id].level = upgrade.level || 0;
+                }
+            }
+        }
+
+        // Load settings
+        if (data.settings) {
+            game.settings = { ...game.settings, ...data.settings };
+            // Apply theme
+            if (game.settings.theme === 'light') {
+                document.body.classList.add('light-theme');
+                document.getElementById('light-theme-btn').classList.add('active');
+                document.getElementById('dark-theme-btn').classList.remove('active');
+            }
+            // Apply volume
+            document.getElementById('volume-slider').value = game.settings.volume;
+            document.getElementById('volume-value').textContent = game.settings.volume + '%';
+        }
+
+        // Show rebirth tab if player has nectar or enough honey
+        if (game.nectar > 0 || game.totalHoney >= 100000) {
+            document.getElementById('tab-rebirth').style.display = 'block';
+        }
+
         // Offline progress
         if (data.timestamp) {
             const offlineSeconds = (Date.now() - data.timestamp) / 1000;
-            const efficiency = game.mutations.longevity.purchased ? 1.0 : 0.5;
+            let efficiency = game.mutations.longevity.purchased ? 1.0 : 0.5;
+            // Apply rebirth offline bonus
+            efficiency *= (1 + game.rebirthUpgrades.offline.level * game.rebirthUpgrades.offline.effect);
 
             const offlineHoney = getHoneyPerSecond() * offlineSeconds * efficiency;
             const offlineMoney = getMoneyPerSecond() * offlineSeconds * efficiency;
@@ -1091,18 +1448,16 @@ function loadGame() {
                 game.money += offlineMoney;
                 game.totalMoney += offlineMoney;
 
-                let message = `Welcome back! You earned `;
-                if (offlineHoney > 0) message += `${formatNumber(Math.floor(offlineHoney))} honey`;
-                if (offlineHoney > 0 && offlineMoney > 0) message += ` and `;
-                if (offlineMoney > 0) message += `${formatNumber(Math.floor(offlineMoney))} coins`;
-                message += ` while away.`;
-
-                alert(message);
+                // Show notification instead of alert
+                setTimeout(() => {
+                    showOfflineNotification(offlineHoney, offlineMoney);
+                }, 500);
             }
         }
 
         checkUnlocks();
         renderAchievements();
+        updateRebirthUI();
         updateUI();
     } else {
         renderAchievements();
@@ -1125,6 +1480,7 @@ window.onload = function() {
     loadGame();
     checkUnlocks();
     updateUI();
+    setupKeyboardShortcuts();
     setInterval(gameLoop, 100);
 };
 
