@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Universal Honey</title>
     <link rel="stylesheet" href="css/styles.css">
+    <!-- Vercel Analytics -->
+    <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
     <div id="game-container">
@@ -33,10 +35,13 @@
             <div id="production-tab" class="tab-content active">
                 <section id="actions">
                     <h2>Actions</h2>
-                    <button id="collect-btn" onclick="collectHoney()">
-                        Collect Honey
-                        <span class="btn-info">+1 honey</span>
-                    </button>
+                    <div id="click-area">
+                        <button id="collect-btn" onclick="collectHoney(event)">
+                            Collect Honey
+                            <span class="btn-info">+1 honey</span>
+                        </button>
+                        <div id="float-container"></div>
+                    </div>
                 </section>
 
                 <section id="upgrades">

@@ -147,12 +147,72 @@ function getHoneyPrice() {
 }
 
 // Collect honey (click action)
-function collectHoney() {
+function collectHoney(event) {
     const amount = game.clickValue * game.multipliers.click;
     game.honey += amount;
     game.totalHoney += amount;
     game.totalClicks++;
+
+    // Create floating text
+    if (event) {
+        createFloatingText(event, amount);
+        createRipple(event);
+    }
+
+    // Button pulse animation
+    const btn = document.getElementById('collect-btn');
+    btn.classList.remove('clicked');
+    void btn.offsetWidth; // Trigger reflow
+    btn.classList.add('clicked');
+
     updateUI();
+}
+
+// Create floating text animation
+function createFloatingText(event, amount) {
+    const container = document.getElementById('float-container');
+    const btn = document.getElementById('collect-btn');
+    const rect = btn.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+
+    const floatText = document.createElement('div');
+    floatText.className = 'float-text';
+    floatText.textContent = `+${amount}`;
+
+    // Position near click with some randomness
+    const x = event.clientX - containerRect.left + (Math.random() - 0.5) * 40;
+    const y = event.clientY - containerRect.top - 10;
+
+    floatText.style.left = `${x}px`;
+    floatText.style.top = `${y}px`;
+
+    container.appendChild(floatText);
+
+    // Remove after animation
+    setTimeout(() => {
+        floatText.remove();
+    }, 1000);
+}
+
+// Create ripple effect
+function createRipple(event) {
+    const btn = document.getElementById('collect-btn');
+    const rect = btn.getBoundingClientRect();
+
+    const ripple = document.createElement('span');
+    ripple.className = 'ripple';
+
+    const size = Math.max(rect.width, rect.height);
+    ripple.style.width = ripple.style.height = `${size}px`;
+
+    ripple.style.left = `${event.clientX - rect.left - size / 2}px`;
+    ripple.style.top = `${event.clientY - rect.top - size / 2}px`;
+
+    btn.appendChild(ripple);
+
+    setTimeout(() => {
+        ripple.remove();
+    }, 400);
 }
 
 // Buy upgrade
