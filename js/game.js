@@ -146,10 +146,7 @@ const game = {
     activeChallenge: null,
     challengeStartTime: 0,
     challengeStartHoney: 0,
-    completedChallenges: 0,
-
-    // Auto-buy
-    autoBuyEnabled: false
+    completedChallenges: 0
 };
 
 // Achievement definitions
@@ -1184,7 +1181,6 @@ function gameLoop() {
     updateRebirthUI();
     updatePrestigeDisplay();
     updateChallengeUI();
-    runAutoBuy();
     updateUI();
 }
 
@@ -1635,34 +1631,6 @@ function completeChallenge(success) {
     saveGame();
 }
 
-// Auto-buy system
-function toggleAutoBuy() {
-    game.autoBuyEnabled = document.getElementById('auto-buy-checkbox').checked;
-    saveGame();
-}
-
-function runAutoBuy() {
-    if (!game.autoBuyEnabled) return;
-
-    // Find cheapest affordable upgrade
-    let cheapest = null;
-    let cheapestCost = Infinity;
-
-    for (const [id, upgrade] of Object.entries(game.upgrades)) {
-        const cost = getUpgradeCost(id);
-        if (cost <= game.honey && cost < cheapestCost) {
-            cheapest = id;
-            cheapestCost = cost;
-        }
-    }
-
-    if (cheapest) {
-        game.honey -= cheapestCost;
-        game.upgrades[cheapest].owned++;
-        checkUnlocks();
-    }
-}
-
 // Update prestige display
 function updatePrestigeDisplay() {
     const productionBonus = game.rebirthUpgrades.production.level * 10;
@@ -1837,7 +1805,6 @@ function saveGame() {
         lastDailyReward: game.lastDailyReward,
         dailyStreak: game.dailyStreak,
         completedChallenges: game.completedChallenges,
-        autoBuyEnabled: game.autoBuyEnabled,
         timestamp: Date.now()
     };
 
@@ -1969,12 +1936,8 @@ function loadGame() {
         if (data.lastDailyReward !== undefined) game.lastDailyReward = data.lastDailyReward;
         if (data.dailyStreak !== undefined) game.dailyStreak = data.dailyStreak;
 
-        // Load challenge and auto-buy data
+        // Load challenge data
         if (data.completedChallenges !== undefined) game.completedChallenges = data.completedChallenges;
-        if (data.autoBuyEnabled !== undefined) {
-            game.autoBuyEnabled = data.autoBuyEnabled;
-            document.getElementById('auto-buy-checkbox').checked = game.autoBuyEnabled;
-        }
 
         // Offline progress with cap
         if (data.timestamp) {
