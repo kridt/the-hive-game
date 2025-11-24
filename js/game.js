@@ -140,7 +140,16 @@ const game = {
 
     // Daily rewards
     lastDailyReward: 0,
-    dailyStreak: 0
+    dailyStreak: 0,
+
+    // Challenges
+    activeChallenge: null,
+    challengeStartTime: 0,
+    challengeStartHoney: 0,
+    completedChallenges: 0,
+
+    // Auto-buy
+    autoBuyEnabled: false
 };
 
 // Achievement definitions
@@ -1173,6 +1182,9 @@ function gameLoop() {
     updatePollination();
     checkAchievements();
     updateRebirthUI();
+    updatePrestigeDisplay();
+    updateChallengeUI();
+    runAutoBuy();
     updateUI();
 }
 
@@ -1458,9 +1470,19 @@ function showOfflineNotification(honey, money) {
 
 // Keyboard shortcuts
 function setupKeyboardShortcuts() {
+    // Track modifier keys for buy amount
     document.addEventListener('keydown', (e) => {
         // Ignore if typing in input
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+        // Modifier key shortcuts for buy amounts
+        if (e.shiftKey && !e.ctrlKey) {
+            setBuyAmountTemp(10);
+        } else if (e.ctrlKey && !e.shiftKey) {
+            setBuyAmountTemp(100);
+        } else if (e.shiftKey && e.ctrlKey) {
+            setBuyAmountTemp(-1); // Max
+        }
 
         switch (e.key.toLowerCase()) {
             case ' ':
@@ -1486,9 +1508,44 @@ function setupKeyboardShortcuts() {
                 switchTabByIndex(5);
                 break;
             case 's':
-                saveGame();
+                if (!e.ctrlKey) saveGame();
                 break;
         }
+    });
+
+    // Reset buy amount when modifier released
+    document.addEventListener('keyup', (e) => {
+        if (e.key === 'Shift' || e.key === 'Control') {
+            resetBuyAmount();
+        }
+    });
+}
+
+let savedBuyAmount = null;
+
+function setBuyAmountTemp(amount) {
+    if (savedBuyAmount === null) {
+        savedBuyAmount = game.settings.buyAmount;
+    }
+    game.settings.buyAmount = amount;
+    updateBulkButtons();
+    updateUI();
+}
+
+function resetBuyAmount() {
+    if (savedBuyAmount !== null) {
+        game.settings.buyAmount = savedBuyAmount;
+        savedBuyAmount = null;
+        updateBulkButtons();
+        updateUI();
+    }
+}
+
+function updateBulkButtons() {
+    const amount = game.settings.buyAmount;
+    document.querySelectorAll('.bulk-btn').forEach(btn => {
+        const btnAmount = btn.textContent === 'Max' ? -1 : parseInt(btn.textContent.replace('x', ''));
+        btn.classList.toggle('active', btnAmount === amount);
     });
 }
 
@@ -1500,6 +1557,121 @@ function switchTabByIndex(index) {
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         document.getElementById(`${tabs[index]}-tab`).classList.add('active');
         tabBtn.classList.add('active');
+    }
+}
+
+// Challenge system
+const challenges = [
+    { goal: 1000, time: 120, reward: 200, name: 'Collect 1,000 honey' },
+    { goal: 5000, time: 180, reward: 500, name: 'Collect 5,000 honey' },
+    { goal: 10000, time: 300, reward: 1000, name: 'Collect 10,000 honey' },
+    { goal: 50000, time: 300, reward: 5000, name: 'Collect 50,000 honey' },
+    { goal: 100000, time: 300, reward: 10000, name: 'Collect 100,000 honey' },
+    { goal: 500000, time: 300, reward: 50000, name: 'Collect 500,000 honey' },
+    { goal: 1000000, time: 300, reward: 100000, name: 'Collect 1,000,000 honey' }
+];
+
+function startNewChallenge() {
+    // Pick a challenge based on progress
+    let challengeIndex = Math.min(game.completedChallenges, challenges.length - 1);
+    const challenge = challenges[challengeIndex];
+
+    game.activeChallenge = {
+        goal: challenge.goal,
+        time: challenge.time,
+        reward: challenge.reward,
+        name: challenge.name
+    };
+    game.challengeStartTime = Date.now();
+    game.challengeStartHoney = game.totalHoney;
+
+    document.getElementById('no-challenge').style.display = 'none';
+    document.getElementById('active-challenge').style.display = 'block';
+    document.getElementById('challenge-goal').textContent = challenge.name;
+    document.getElementById('challenge-reward').textContent = `+${formatNumber(challenge.reward)} honey`;
+
+    updateChallengeUI();
+}
+
+function updateChallengeUI() {
+    if (!game.activeChallenge) return;
+
+    const elapsed = (Date.now() - game.challengeStartTime) / 1000;
+    const remaining = Math.max(0, game.activeChallenge.time - elapsed);
+    const collected = game.totalHoney - game.challengeStartHoney;
+    const progress = Math.min(100, (collected / game.activeChallenge.goal) * 100);
+
+    // Update timer
+    const mins = Math.floor(remaining / 60);
+    const secs = Math.floor(remaining % 60);
+    document.getElementById('challenge-timer').textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+
+    // Update progress
+    document.getElementById('challenge-progress-bar').style.width = `${progress}%`;
+    document.getElementById('challenge-progress-text').textContent = `${Math.floor(progress)}%`;
+
+    // Check completion
+    if (collected >= game.activeChallenge.goal) {
+        completeChallenge(true);
+    } else if (remaining <= 0) {
+        completeChallenge(false);
+    }
+}
+
+function completeChallenge(success) {
+    if (success) {
+        game.honey += game.activeChallenge.reward;
+        game.totalHoney += game.activeChallenge.reward;
+        game.completedChallenges++;
+        playSound('achievement');
+        showAchievementPopup(`Challenge Complete! +${formatNumber(game.activeChallenge.reward)} honey`);
+    } else {
+        showAchievementPopup('Challenge Failed - Time ran out!');
+    }
+
+    game.activeChallenge = null;
+    document.getElementById('no-challenge').style.display = 'block';
+    document.getElementById('active-challenge').style.display = 'none';
+    saveGame();
+}
+
+// Auto-buy system
+function toggleAutoBuy() {
+    game.autoBuyEnabled = document.getElementById('auto-buy-checkbox').checked;
+    saveGame();
+}
+
+function runAutoBuy() {
+    if (!game.autoBuyEnabled) return;
+
+    // Find cheapest affordable upgrade
+    let cheapest = null;
+    let cheapestCost = Infinity;
+
+    for (const [id, upgrade] of Object.entries(game.upgrades)) {
+        const cost = getUpgradeCost(id);
+        if (cost <= game.honey && cost < cheapestCost) {
+            cheapest = id;
+            cheapestCost = cost;
+        }
+    }
+
+    if (cheapest) {
+        game.honey -= cheapestCost;
+        game.upgrades[cheapest].owned++;
+        checkUnlocks();
+    }
+}
+
+// Update prestige display
+function updatePrestigeDisplay() {
+    const productionBonus = game.rebirthUpgrades.production.level * 10;
+    const clickBonus = game.rebirthUpgrades.clicking.level * 25;
+    const totalBonus = productionBonus + clickBonus;
+
+    if (totalBonus > 0 || game.nectar > 0) {
+        document.getElementById('prestige-display').style.display = 'block';
+        document.getElementById('prestige-bonus').textContent = totalBonus;
     }
 }
 
@@ -1664,6 +1836,8 @@ function saveGame() {
         settings: game.settings,
         lastDailyReward: game.lastDailyReward,
         dailyStreak: game.dailyStreak,
+        completedChallenges: game.completedChallenges,
+        autoBuyEnabled: game.autoBuyEnabled,
         timestamp: Date.now()
     };
 
@@ -1794,6 +1968,13 @@ function loadGame() {
         // Load daily reward data
         if (data.lastDailyReward !== undefined) game.lastDailyReward = data.lastDailyReward;
         if (data.dailyStreak !== undefined) game.dailyStreak = data.dailyStreak;
+
+        // Load challenge and auto-buy data
+        if (data.completedChallenges !== undefined) game.completedChallenges = data.completedChallenges;
+        if (data.autoBuyEnabled !== undefined) {
+            game.autoBuyEnabled = data.autoBuyEnabled;
+            document.getElementById('auto-buy-checkbox').checked = game.autoBuyEnabled;
+        }
 
         // Offline progress with cap
         if (data.timestamp) {

@@ -86,6 +86,96 @@ h1::after {
     color: #aaa;
 }
 
+#prestige-display {
+    font-size: 1em;
+    color: #a78bfa;
+    margin-top: 5px;
+}
+
+/* Auto-buy toggle */
+#auto-buy-toggle {
+    margin-top: 15px;
+    padding: 10px;
+    background: rgba(255, 215, 0, 0.1);
+    border-radius: 8px;
+}
+
+#auto-buy-toggle label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    color: #aaa;
+    font-size: 0.9em;
+}
+
+#auto-buy-toggle input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+/* Challenges section */
+#challenges-section h2::before { content: '🎯 '; }
+
+#challenge-display {
+    text-align: center;
+}
+
+#no-challenge p {
+    color: #888;
+    margin-bottom: 15px;
+}
+
+#no-challenge button {
+    padding: 10px 25px;
+    background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
+    border: none;
+    border-radius: 8px;
+    color: #1a1a2e;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+#no-challenge button:hover {
+    transform: scale(1.05);
+}
+
+.challenge-goal {
+    font-size: 1.2em;
+    color: #ffd700;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.challenge-timer {
+    color: #ff6b6b;
+    margin-bottom: 10px;
+}
+
+.challenge-progress {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.challenge-progress .progress-bar {
+    flex: 1;
+}
+
+#challenge-progress-text {
+    color: #4ade80;
+    font-weight: bold;
+    min-width: 40px;
+}
+
+.challenge-reward {
+    color: #4ade80;
+    font-size: 0.9em;
+}
+
 /* Bulk buy buttons */
 #bulk-buy {
     display: flex;

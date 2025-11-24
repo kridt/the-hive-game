@@ -82,6 +82,9 @@
             <div id="honey-per-second">
                 per second: <span id="hps">0</span>
             </div>
+            <div id="prestige-display" style="display:none;">
+                Prestige bonus: <span id="prestige-bonus">0</span>%
+            </div>
             <div id="bulk-buy">
                 <span>Buy:</span>
                 <button class="bulk-btn active" onclick="setBuyAmount(1)">x1</button>
@@ -113,6 +116,33 @@
                             <span class="btn-info">+1 honey</span>
                         </button>
                         <div id="float-container"></div>
+                    </div>
+                    <div id="auto-buy-toggle">
+                        <label>
+                            <input type="checkbox" id="auto-buy-checkbox" onchange="toggleAutoBuy()">
+                            Auto-buy cheapest upgrade
+                        </label>
+                    </div>
+                </section>
+
+                <section id="challenges-section">
+                    <h2>Daily Challenge</h2>
+                    <div id="challenge-display">
+                        <div id="no-challenge">
+                            <p>Complete challenges for bonus rewards!</p>
+                            <button onclick="startNewChallenge()">Start Challenge</button>
+                        </div>
+                        <div id="active-challenge" style="display:none;">
+                            <div class="challenge-goal" id="challenge-goal">Collect 10,000 honey</div>
+                            <div class="challenge-timer">Time left: <span id="challenge-timer">5:00</span></div>
+                            <div class="challenge-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="challenge-progress-bar"></div>
+                                </div>
+                                <span id="challenge-progress-text">0%</span>
+                            </div>
+                            <div class="challenge-reward">Reward: <span id="challenge-reward">+500 honey</span></div>
+                        </div>
                     </div>
                 </section>
 
